@@ -118,7 +118,7 @@ If you don't declare a sidebar, the `home_sidebar` file gets used as the default
     type: "pages"
   values:
     layout: "page"
-    comments: true
+    comments: false
     search: true
     sidebar: home_sidebar
     topnav: topnav
@@ -133,7 +133,7 @@ If you want to set different sidebar defaults based on different folders for you
     type: "pages"
   values:
     layout: "page"
-    comments: true
+    comments: false
     search: true
     sidebar: mydoc_sidebar
     topnav: topnav
@@ -162,7 +162,7 @@ Because most topnav options will be the same, the `_config.yml` file specifies t
     type: "pages"
   values:
     layout: "page"
-    comments: true
+    comments: false
     search: true
     sidebar: home_sidebar
     topnav: topnav
@@ -303,7 +303,7 @@ For more detail on the sidebar, see [Sidebar navigation][mydoc_sidebar_navigatio
 
 ## Comments
 
-The theme integrates [Commento.io](https://commento.io/) for comments below pages and posts. (This commenting service doesn't inject controversial tracking ads like Disqus does.) You will need to Commento.io account + plan ($5/month) to authorize Commento with your domain (no other configuration should be required). If you don't want comments, in the \_config.yml file, change the `comments: true` properties (under `defaults`) to `comments: false` in every instance. Then in the commento.html include file (inside \_includes), the `{% raw %}{% unless page.comments == false %} ... {% endunless %}{% endraw %}` logic will not insert the Commentio form.
+The theme integrates [Commento.io](https://commento.io/) for comments below pages and posts. (This commenting service doesn't inject controversial tracking ads like Disqus does.) You will need to Commento.io account + plan ($5/month) to authorize Commento with your domain (no other configuration should be required). If you don't want comments, in the \_config.yml file, change the `comments: false` properties (under `defaults`) to `comments: false` in every instance. Then in the commento.html include file (inside \_includes), the `{% raw %}{% unless page.comments == false %} ... {% endunless %}{% endraw %}` logic will not insert the Commentio form.
 
 ## Relative links and offline viewing
 
