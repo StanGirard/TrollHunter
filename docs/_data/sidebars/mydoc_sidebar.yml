@@ -43,4 +43,10 @@ entries:
     - title: Support
       url: /mydoc_support.html
       output: web, pdf
+  - title: Twint
+    output: web, pdf
+    folderitems:
+    - title: Getting Started
+      url: /twint_install.html
+      output: web, pdf
 
