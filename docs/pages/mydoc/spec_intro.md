@@ -64,3 +64,9 @@ Enter a tweet and know if it is a troll and/or a fake news
 - New York Times
 
 Crawler qui alimente elastic regulièrement
+
+## Elastic Search
+- Date
+- Titre
+- Url
+- Keywords
