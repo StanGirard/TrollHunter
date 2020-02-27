@@ -5,7 +5,13 @@ entries:
   product: TrollHunter Doc
   version: 6.0
   folders:
-
+  - title: Specification
+    output: web, pdf
+    folderitems:
+    - title: Definition
+      url: /spec_intro.html
+      output: web, pdf
+      type: homepage
   - title:
     output: pdf
     type: frontmatter
@@ -26,7 +32,6 @@ entries:
     - title: Get started
       url: /index.html
       output: web, pdf
-      type: homepage
 
     - title: Introduction
       url: /mydoc_introduction.html
@@ -43,12 +48,7 @@ entries:
     - title: Support
       url: /mydoc_support.html
       output: web, pdf
-  - title: Specification
-    output: web, pdf
-    folderitems:
-    - title: Definition
-      url: /spec_intro.html
-      output: web, pdf
+  
   - title: Twint
     output: web, pdf
     folderitems:
