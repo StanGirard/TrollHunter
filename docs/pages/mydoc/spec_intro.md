@@ -48,3 +48,10 @@ Enter a tweet and know if it is a troll and/or a fake news
     - Troll/FN
     - Viral
     - ? (Theme)
+
+- twint
+    - metadata compte + tweet
+    - tweet parent
+    - compte rt + like
+    - abonne + abonnement
+    
