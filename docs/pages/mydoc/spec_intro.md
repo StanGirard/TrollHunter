@@ -54,4 +54,13 @@ Enter a tweet and know if it is a troll and/or a fake news
     - tweet parent
     - compte rt + like
     - abonne + abonnement
-    
+
+# News
+
+## Trusted News Site
+
+- Washington Post
+- The Guardian
+- New York Times
+
+Crawler qui alimente elastic regulièrement
