@@ -43,6 +43,12 @@ entries:
     - title: Support
       url: /mydoc_support.html
       output: web, pdf
+  - title: Specification
+    output: web, pdf
+    folderitems:
+    - title: Definition
+      url: /spec_intro.html
+      output: web, pdf
   - title: Twint
     output: web, pdf
     folderitems:
