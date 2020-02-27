@@ -36,4 +36,12 @@ folder: mydoc
 
 Enter a tweet and know if it is a troll and/or a fake news
 
+# Twitter
 
+- Origine
+- Extraire les meta
+- RT + Likes présence de TF(database)
+- Abonnés, Abonnements vers TF(database)
+- Analyse du contenu
+- Analyse de diffusion
+- Classifcation 
