@@ -44,4 +44,7 @@ Enter a tweet and know if it is a troll and/or a fake news
 - Abonnés, Abonnements vers TF(database)
 - Analyse du contenu
 - Analyse de diffusion
-- Classifcation 
+- Classifcation
+    - Troll/FN
+    - Viral
+    - ? (Theme)
