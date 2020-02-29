@@ -6,3 +6,4 @@
 /docs/.jekyll-cache/
 /docs/.jekyll-metadata
 /.idea/*
+__pycache__/
