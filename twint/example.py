@@ -1,5 +1,6 @@
 import twint
-
+## pip3 install twint
+## Check doc if needed https://doc.trollhunter.guru/twint_install.html
 c = twint.Config()
 c.Search = "fruit"
 c.Output = "tweets.csv"

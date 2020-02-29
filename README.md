@@ -10,7 +10,7 @@
 
 ## Workflow
 
-- [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/index.fr_FR.html)
+- [Github Flow](https://guides.github.com/introduction/flow/)
 - Github Projects
 
 ## Cloud
