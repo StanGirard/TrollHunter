@@ -34,6 +34,5 @@ def parse_sitemap( url,headers):
         #change = u.find('changefreq').string
         
         out.append(values)
-    print(out)
     panda_out = pd.DataFrame(out, columns= headers)
     return panda_out
