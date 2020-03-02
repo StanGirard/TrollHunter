@@ -1,6 +1,10 @@
 import twint
 import datetime
 import dateutil
+import asyncio
+from multiprocessing.dummy import Pool,Manager
+
+
 
 
 config = twint.Config()
@@ -13,14 +17,16 @@ def get_info_from_user(user,args):
     # return format_tweet_to_html(tweets_result,user)
 
 def get_info_user(user,config):
-    config.Followers = True
-    config.Username = user
-    config.Following = True
-    config.Store_object = True
+    config.Username = "mus_mastour"
     config.User_full = True
-    config.Limit = 10
-    twint.run.Following(config)
-    twint.run.Followers(config)
+    config.Profile_full = True
+    config.Pandas_au = True
+    config.Store_object = True
+    config.Since = datetime.date.today().isoformat()
+    # Need Lookup because bug with twint and flask
+    twint.run.Search(config)
+    twint.run.Lookup(config)
+    # twint.run.Profile(config)
     tweets_result_df = twint.output.panda.Tweets_df
 
     print(twint.output)
@@ -34,7 +40,9 @@ def get_list_tweets(config,args):
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
+
 def get_tweet_from_user(user,args):
+    # print("test")
     config.Username = user
     config.Search = None
     get_twint_config(config,args)
