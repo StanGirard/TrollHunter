@@ -6,3 +6,4 @@
 /docs/.jekyll-cache/
 /docs/.jekyll-metadata
 .idea/*
+news-crawler/__pycache__/
