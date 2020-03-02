@@ -19,23 +19,25 @@ def parse_sitemap( url,headers):
     sitemaps = soup.findAll('sitemap')
     new_list = ["Source"] + headers
     panda_out_total = pd.DataFrame([], columns=new_list)
-    # no urls? bail
+
+
     if not urls and not sitemaps:
         return False
+
+    # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
             panda_recursive = parse_sitemap(test, headers)
             panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
-            print("Sitemap: " + test )
-            print(panda_out_total)
-        return
 
     # storage for later...
     out = []
 
-    # extract what we need from the url
+    # Creates a hash of the parent sitemap
     hash_sitemap = hashlib.md5(str(url).encode('utf-8')).hexdigest()
+
+    # Extract the keys we want
     for u in urls:
         values = [hash_sitemap]
         for head in headers:
@@ -46,13 +48,14 @@ def parse_sitemap( url,headers):
             else:
                 loc = loc.string
             values.append(loc)
-
-        #prio = u.find('priority').string
-        #change = u.find('changefreq').string
-        
         out.append(values)
     
-    
+    # Create a dataframe
     panda_out = pd.DataFrame(out, columns= new_list)
-    panda_out = pd.concat([panda_out, panda_out_total], ignore_index=True)
+
+    # If recursive then merge recursive dataframe
+    if not panda_out_total.empty:
+        panda_out = pd.concat([panda_out, panda_out_total], ignore_index=True)
+
+    #returns the dataframe
     return panda_out
