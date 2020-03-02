@@ -8,7 +8,7 @@ config = twint.Config()
 def get_info_from_user(username,args):
     user = User(username)
     get_info_user(user,config)
-    # get_follower_user(user,config,args)
+    get_follower_user(user,config,args)
 
 
     return "user"
@@ -17,9 +17,10 @@ def get_follower_user(user,config,args):
     config.Username = user.username
     config.Followers = True
     config.Pandas_au = True
+    config.User_full = False
     config.Store_object = True
     twint.run.Followers(config)
-    print("twint")
+    user.set_follower_df(twint.output.panda.Follow_df)
 def get_info_user(user,config):
     config.Username = user.username
     config.User_full = True
