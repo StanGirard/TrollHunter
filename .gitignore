@@ -5,6 +5,6 @@
 /docs/.sass-cache/
 /docs/.jekyll-cache/
 /docs/.jekyll-metadata
-<<<<<<< HEAD
 /.idea/*
 __pycache__/
+news-crawler/__pycache__/
