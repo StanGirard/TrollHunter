@@ -17,14 +17,19 @@ def parse_sitemap( url,headers):
     # find all the <url> tags in the document
     urls = soup.findAll('url')
     sitemaps = soup.findAll('sitemap')
+    new_list = ["Source"] + headers
+    panda_out_total = pd.DataFrame([], columns=new_list)
     # no urls? bail
     if not urls and not sitemaps:
         return False
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
-            print(test)
-        return "Sitemaps"
+            panda_recursive = parse_sitemap(test, headers)
+            panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
+            print("Sitemap: " + test )
+            print(panda_out_total)
+        return
 
     # storage for later...
     out = []
@@ -35,6 +40,7 @@ def parse_sitemap( url,headers):
     
         values = [hash_sitemap]
         for head in headers:
+            print(u)
             loc = u.find(head).string
             values.append(loc)
 
@@ -43,7 +49,7 @@ def parse_sitemap( url,headers):
         
         out.append(values)
     
-    new_list = ["Sitemap Source"] + headers
-    panda_out = pd.DataFrame(out, columns= new_list)
     
+    panda_out = pd.DataFrame(out, columns= new_list)
+    panda_out = pd.concat([panda_out, panda_out_total], ignore_index=True)
     return panda_out
