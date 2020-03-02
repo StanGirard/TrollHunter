@@ -8,21 +8,22 @@ config = twint.Config()
 def get_info_from_user(username,args):
     user = User(username)
     get_info_user(user,config)
-    get_follower_user(user,config)
+    # get_follower_user(user,config,args)
 
 
-    return user
-def get_follower_user(user,config):
+    return "user"
+def get_follower_user(user,config,args):
+    get_twint_config(config,args)
     config.Username = user.username
     config.Followers = True
     config.Pandas_au = True
+    config.Store_object = True
     twint.run.Followers(config)
     print("twint")
 def get_info_user(user,config):
     config.Username = user.username
     config.User_full = True
     config.Profile_full = True
-    config.Pandas = True
     config.Store_object = True
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
