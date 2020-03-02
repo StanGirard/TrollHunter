@@ -2,6 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup as Soup
 import pandas as pd
+import hashlib
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
 def parse_sitemap( url,headers):
@@ -15,17 +16,24 @@ def parse_sitemap( url,headers):
 
     # find all the <url> tags in the document
     urls = soup.findAll('url')
-
+    sitemaps = soup.findAll('sitemap')
     # no urls? bail
-    if not urls:
+    if not urls and not sitemaps:
         return False
+    if sitemaps:
+        for u in sitemaps:
+            test = u.find('loc').string
+            print(test)
+        return "Sitemaps"
 
     # storage for later...
     out = []
 
     # extract what we need from the url
+    hash_sitemap = hashlib.md5(str(url).encode('utf-8')).hexdigest()
     for u in urls:
-        values = []
+    
+        values = [hash_sitemap]
         for head in headers:
             loc = u.find(head).string
             values.append(loc)
@@ -34,5 +42,8 @@ def parse_sitemap( url,headers):
         #change = u.find('changefreq').string
         
         out.append(values)
-    panda_out = pd.DataFrame(out, columns= headers)
+    
+    new_list = ["Sitemap Source"] + headers
+    panda_out = pd.DataFrame(out, columns= new_list)
+    
     return panda_out
