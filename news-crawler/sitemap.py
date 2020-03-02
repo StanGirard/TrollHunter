@@ -12,7 +12,7 @@ def parse_sitemap( url,headers):
         return False
 
     # BeautifulSoup to parse the document
-    soup = Soup(resp.content)
+    soup = Soup(resp.content, "xml")
 
     # find all the <url> tags in the document
     urls = soup.findAll('url')
@@ -37,11 +37,14 @@ def parse_sitemap( url,headers):
     # extract what we need from the url
     hash_sitemap = hashlib.md5(str(url).encode('utf-8')).hexdigest()
     for u in urls:
-    
         values = [hash_sitemap]
         for head in headers:
-            print(u)
-            loc = u.find(head).string
+            loc = None
+            loc = u.find(head)
+            if not loc:
+                loc = "None"
+            else:
+                loc = loc.string
             values.append(loc)
 
         #prio = u.find('priority').string
