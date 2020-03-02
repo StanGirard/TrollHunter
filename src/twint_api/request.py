@@ -1,36 +1,34 @@
 import twint
 import datetime
-import dateutil
-import asyncio
-from multiprocessing.dummy import Pool,Manager
-
-
-
+import pandas as pd
+from src.User import User
 
 config = twint.Config()
 
-def get_info_from_user(user,args):
-    # get_twint_config(config,args)
-    user_info = get_info_user(user,config)
+def get_info_from_user(username,args):
+    user = User(username)
+    get_info_user(user,config)
+    get_follower_user(user,config)
 
 
-    # return format_tweet_to_html(tweets_result,user)
-
+    return user
+def get_follower_user(user,config):
+    config.Username = user.username
+    config.Followers = True
+    config.Pandas_au = True
+    twint.run.Followers(config)
+    print("twint")
 def get_info_user(user,config):
-    config.Username = "mus_mastour"
+    config.Username = user.username
     config.User_full = True
     config.Profile_full = True
-    config.Pandas_au = True
+    config.Pandas = True
     config.Store_object = True
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
     twint.run.Search(config)
     twint.run.Lookup(config)
-    # twint.run.Profile(config)
-    tweets_result_df = twint.output.panda.Tweets_df
-
-    print(twint.output)
-    return 0
+    user.set_info_to_df(twint.output.users_list[0])
 
 def get_list_tweets(config,args):
 
