@@ -5,11 +5,33 @@ import dateutil
 
 config = twint.Config()
 
+def get_info_from_user(user,args):
+    # get_twint_config(config,args)
+    user_info = get_info_user(user,config)
+
+
+    # return format_tweet_to_html(tweets_result,user)
+
+def get_info_user(user,config):
+    config.Followers = True
+    config.Username = user
+    config.Following = True
+    config.Store_object = True
+    config.User_full = True
+    config.Limit = 10
+    twint.run.Following(config)
+    twint.run.Followers(config)
+    tweets_result_df = twint.output.panda.Tweets_df
+
+    print(twint.output)
+    return 0
+
 def get_list_tweets(config,args):
 
     get_twint_config(config,args)
     twint.output.tweets_list.clear()
     twint.run.Search(config)
+    # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
 def get_tweet_from_user(user,args):
@@ -17,7 +39,7 @@ def get_tweet_from_user(user,args):
     config.Search = None
     get_twint_config(config,args)
     tweets_result = get_list_tweets(config,args)
-
+    tweets_result_df = twint.output.panda.Tweets_df
     return format_tweet_to_html(tweets_result,user)
 
 def get_tweet_from_search(args):
@@ -26,6 +48,8 @@ def get_tweet_from_search(args):
         return " bad request"
     config.Search = args["search"]
     tweet_result = get_list_tweets(config,args)
+    tweets_result_df = twint.output.panda.Tweets_df
+
     return format_tweet_to_html(tweet_result,"test")
 
 
@@ -48,6 +72,7 @@ def get_twint_config(config,args):
     config.Limit = limit
     config.Retweets = retweet
     config.Since = since
+    config.Pandas = True
     config.Store_object = True
 
 def format_tweet_to_html(tweets_list,word):
