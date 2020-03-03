@@ -1,7 +1,7 @@
-import twint
 import datetime
 import pandas as pd
 from src.User import User
+from twint import twint
 
 config = twint.Config()
 
@@ -52,9 +52,9 @@ def get_list_tweets(config,args):
     config.Profile_full = True
     twint.output.tweets_list.clear()
     if config.Retweets:
-        twint.run.Search(config)
-    else:
         twint.run.Profile(config)
+    else:
+        twint.run.Search(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
