@@ -9,3 +9,6 @@ class User:
 
     def set_follower_df(self,follow):
         self.follower_df = follow
+
+    def set_following_df(self,follow):
+        self.following_df = follow

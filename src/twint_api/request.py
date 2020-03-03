@@ -9,6 +9,7 @@ def get_info_from_user(username,args):
     user = User(username)
     get_info_user(user,config)
     get_follower_user(user,config,args)
+    get_following_user(user,config,args)
 
 
     return "user"
@@ -19,8 +20,20 @@ def get_follower_user(user,config,args):
     config.Pandas_au = True
     config.User_full = False
     config.Store_object = True
+    config.Limit = user.info_df.loc[0]["followers"]
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
+
+def get_following_user(user,config,args):
+    get_twint_config(config,args)
+    config.Username = user.username
+    config.Pandas_au = True
+    config.User_full = False
+    config.Store_object = True
+    config.Limit = user.info_df.loc[0]["following"]
+    twint.run.Following(config)
+    user.set_following_df(twint.output.panda.Follow_df)
+
 def get_info_user(user,config):
     config.Username = user.username
     config.User_full = True
@@ -63,7 +76,7 @@ def get_tweet_from_search(args):
 
 
 def get_twint_config(config,args):
-    limit = 100
+    limit = 10000
     since = datetime.date.today() - datetime.timedelta(days=10)
     since = since.isoformat()
     retweet = False
