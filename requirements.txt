@@ -35,3 +35,4 @@ twint==2.1.15
 urllib3==1.25.8
 Werkzeug==1.0.0
 yarl==1.4.2
+psycopg2==2.8.4
