@@ -48,8 +48,13 @@ def get_info_user(user,config):
 def get_list_tweets(config,args):
 
     get_twint_config(config,args)
+    config.Profile = True
+    config.Profile_full = True
     twint.output.tweets_list.clear()
-    twint.run.Search(config)
+    if config.Retweets:
+        twint.run.Search(config)
+    else:
+        twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
@@ -58,7 +63,6 @@ def get_tweet_from_user(user,args):
     # print("test")
     config.Username = user
     config.Search = None
-    get_twint_config(config,args)
     tweets_result = get_list_tweets(config,args)
     tweets_result_df = twint.output.panda.Tweets_df
     return format_tweet_to_html(tweets_result,user)
@@ -76,16 +80,18 @@ def get_tweet_from_search(args):
 
 
 def get_twint_config(config,args):
-    limit = 10000
+    limit = 100
     since = datetime.date.today() - datetime.timedelta(days=10)
     since = since.isoformat()
     retweet = False
-    if "limits" in args:
-        limit = args["limits"]
+
+    if "limit" in args:
+        limit = int(args["limit"])
     if "since" in args:
         since = args["since"]
     if "retweet" in args:
-        retweet = args["retweet"]
+        retweet = args["retweet"].lower() == "true"
+
     if "search" in args:
         config.Search = args["search"]
     config.Limit = limit
