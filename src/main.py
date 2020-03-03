@@ -1,5 +1,4 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
 from multiprocessing.dummy import Pool, Manager
 
 from src.twint_api.request import get_tweet_from_user, get_tweet_from_search, get_info_from_user

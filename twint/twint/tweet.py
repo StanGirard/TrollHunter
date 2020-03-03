@@ -82,9 +82,9 @@ def Tweet(tw, config):
     t.id = int(tw["data-item-id"])
     t.id_str = tw["data-item-id"]
     t.conversation_id = tw["data-conversation-id"]
-    t.datetime = int(tw.find("span", "_timestamp")["data-time-ms"])
-    t.datestamp = strftime("%Y-%m-%d", localtime(t.datetime/1000.0))
-    t.timestamp = strftime("%H:%M:%S", localtime(t.datetime/1000.0))
+    t.datetime = int(tw.find("span", "_timestamp")["data-time-ms"])//1000
+    t.datestamp = strftime("%Y-%m-%d", localtime(t.datetime))
+    t.timestamp = strftime("%H:%M:%S", localtime(t.datetime))
     t.user_id = int(tw["data-user-id"])
     t.user_id_str = tw["data-user-id"]
     t.username = tw["data-screen-name"]
