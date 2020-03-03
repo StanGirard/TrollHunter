@@ -154,14 +154,16 @@ class Twint:
         else:
             self.user_agent = await get.RandomUserAgent()
 
-        if self.config.User_id is not None:
-            logme.debug(__name__+':Twint:main:user_id')
-            self.config.Username = await get.Username(self.config.User_id)
+
 
         if self.config.Username is not None:
             logme.debug(__name__+':Twint:main:username')
             url = f"https://twitter.com/{self.config.Username}?lang=en"
             self.config.User_id = await get.User(url, self.config, self.conn, True)
+
+        if self.config.User_id is not None:
+            logme.debug(__name__+':Twint:main:user_id')
+            self.config.Username = await get.Username(self.config.User_id)
 
         if self.config.TwitterSearch and self.config.Since and self.config.Until:
             logme.debug(__name__+':Twint:main:search+since+until')
