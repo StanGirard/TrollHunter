@@ -22,5 +22,9 @@ Link is [http://server.trollhunter.guru](http://server.trollhunter.guru)
 
 # Twint
 
-`twint -s pineapple --since "2020-02-26 20:00:00" -es elastic:changeme@142.93.170.234:9200``
+`twint -s pineapple --since "2020-02-26 20:00:00" -es elastic:changeme@142.93.170.234:9200`
 
+# Postgres
+http://server.trollhunter.guru:8080/ for adminer
+login: postgres
+mdp: trollhunter
