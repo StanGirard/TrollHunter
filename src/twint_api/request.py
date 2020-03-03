@@ -67,7 +67,6 @@ def get_twint_config(config,args):
     since = datetime.date.today() - datetime.timedelta(days=10)
     since = since.isoformat()
     retweet = False
-
     if "limits" in args:
         limit = args["limits"]
     if "since" in args:
@@ -76,12 +75,12 @@ def get_twint_config(config,args):
         retweet = args["retweet"]
     if "search" in args:
         config.Search = args["search"]
-
     config.Limit = limit
     config.Retweets = retweet
     config.Since = since
     config.Pandas = True
     config.Store_object = True
+
 
 def format_tweet_to_html(tweets_list,word):
     ret = "<h1>tweet from {} </h1><br>".format(word)
