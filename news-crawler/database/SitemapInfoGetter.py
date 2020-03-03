@@ -11,9 +11,9 @@ class SitemapInfo:
             self._fetchAllUrlInfo()
 
     def _retriveUrlsByMap(self, map):
-        result = parse_sitemap(map, ["loc", "lastmod","image:loc", "news:keywords" ])
+        result = parse_sitemap(map, ["loc", "lastmod", "image:loc", "news:keywords", "news:title"])
         # for each urls, get info
-        #print(result)
+        # print(result)
         return result
 
     def _fetchAllUrlInfo(self):
@@ -25,4 +25,4 @@ class SitemapInfo:
 
             row[2] = timestamp
 
-        print(self._pdResult)
+        # print(self._pdResult)
