@@ -31,10 +31,10 @@ def parse_sitemap( url,headers, sort = None):
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
-            # if check_sitemap(u):
-            test = u.find('loc').string
-            panda_recursive = parse_sitemap(test, headers, sort)
-            panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
+            if check_sitemap(u):
+                test = u.find('loc').string
+                panda_recursive = parse_sitemap(test, headers, sort)
+                panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
     out = []
