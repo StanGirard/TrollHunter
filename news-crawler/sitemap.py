@@ -7,7 +7,7 @@ from database.postgres_database import insert_sitemap, update_sitemap, get_sitem
 
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
-def parse_sitemap( url,headers):
+def parse_sitemap( url,headers, sort=None):
     resp = requests.get(url)
     # we didn't get a valid response, bail
     if (200 != resp.status_code):
@@ -15,9 +15,11 @@ def parse_sitemap( url,headers):
 
     # BeautifulSoup to parse the document
     soup = Soup(resp.content, "xml")
-
     # find all the <url> tags in the document
     urls = soup.findAll('url')
+    #Sorts the urls by the key specified
+    if sort:
+        urls = urls.sort(key=lambda x: x.get(sort))
     sitemaps = soup.findAll('sitemap')
     new_list = ["Source"] + headers
     panda_out_total = pd.DataFrame([], columns=new_list)
