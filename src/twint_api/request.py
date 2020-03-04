@@ -10,7 +10,7 @@ def get_info_from_user(username,args):
     get_info_user(user,config)
     get_follower_user(user,config,args)
     get_following_user(user,config,args)
-    get_list_tweet()
+    get_list_tweets(user,config,args)
 
     return "user"
 def get_follower_user(user,config,args):
