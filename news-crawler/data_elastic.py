@@ -27,8 +27,8 @@ def doc_generator(df, headers):
         except StopIteration:
             return
 
-def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None):
-    dataframe = parse_sitemap(url, headers, sort)
+def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
+    dataframe = parse_sitemap(url, headers, sort, influxdb = influxdb)
     if type(dataframe) == bool:
         return
 
