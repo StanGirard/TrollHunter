@@ -89,20 +89,34 @@ def get_tweet_from_search(args):
     return format_tweet_to_html(tweet_result, "test")
 
 
-def get_origin_tweet(tweet, date):
+def get_origin_tweet(args):
+    if "search" not in args:
+        return " bad request"
+    tweet = args["search"]
     config.Username = None
     config.Store_object = True
     config.Search = tweet
-    config.Until = date
 
     twint.output.tweets_list.clear()
     twint.run.Search(config)
 
-    tweet_result = twint.output.tweets_list
+    tweets = twint.output.tweets_list
 
-    tweets_result = [Tweet_obj(t) for t in tweet_result]
+    tweet_result = reversed([Tweet_obj(t) for t in tweets])
+    origin = None
 
-    return tweet_result
+    for t in tweet_result:
+        if t.check_equal(tweet):
+            origin = t
+            break
+
+    res = []
+
+    if origin:
+        origin.pretty_print()
+        res.append(origin)
+
+    return format_tweet_to_html(res, "ORIGIN")
 
 
 def get_twint_config(config, args):
@@ -115,6 +129,8 @@ def get_twint_config(config, args):
         limit = int(args["limit"])
     if "since" in args:
         since = args["since"]
+    if "until" in args:
+        until = args["until"]
     if "retweet" in args:
         retweet = args["retweet"].lower() == "true"
 
@@ -123,6 +139,7 @@ def get_twint_config(config, args):
     config.Limit = limit
     config.Retweets = retweet
     config.Since = since
+    config.until = until
     config.Pandas = True
     config.Store_object = True
 
