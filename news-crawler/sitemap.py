@@ -4,11 +4,17 @@ from bs4 import BeautifulSoup as Soup
 import pandas as pd
 import hashlib
 from database.postgres_database import insert_sitemap, update_sitemap, get_sitemap
+from InfluxLog import InfluxDBLog
+import time
 
+def if_influx_url(influxdb, url):
+    if influxdb:
+        InfluxDBLog().addEntry("Sitemap", "Crawling", 1, "URL", url )
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
-def parse_sitemap( url,headers, sort = None):
+def parse_sitemap( url,headers, sort = None,  influxdb = False ):
     resp = requests.get(url)
+    
     # we didn't get a valid response, bail
     if (200 != resp.status_code):
         return False
@@ -31,10 +37,10 @@ def parse_sitemap( url,headers, sort = None):
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
-            if check_sitemap(u):
-                test = u.find('loc').string
-                panda_recursive = parse_sitemap(test, headers, sort)
-                panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
+            
+            test = u.find('loc').string
+            panda_recursive = parse_sitemap(test, headers, sort, influxdb = influxdb)
+            panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
     out = []
@@ -45,6 +51,8 @@ def parse_sitemap( url,headers, sort = None):
     # Extract the keys we want
     for u in urls:
         values = [hash_sitemap]
+        #Log into influxdb
+        if_influx_url(influxdb, url)
         for head in headers:
             loc = None
             loc = u.find(head)

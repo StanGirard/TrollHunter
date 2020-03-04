@@ -26,8 +26,8 @@ def doc_generator(df, headers):
         except StopIteration:
             return
         
-def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None):
-    dataframe = parse_sitemap(url, headers, sort)
+def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
+    dataframe = parse_sitemap(url, headers, sort, influxdb = influxdb)
     print(dataframe)
     es = Elasticsearch(hosts = [{'host': host, 'port': port}],http_auth=(user, password),)
     print(helpers.bulk(es, doc_generator(dataframe, headers)))
