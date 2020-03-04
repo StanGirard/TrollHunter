@@ -51,10 +51,7 @@ def get_list_tweets(config,args):
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
-    if config.Retweets:
-        twint.run.Profile(config)
-    else:
-        twint.run.Search(config)
+    twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
