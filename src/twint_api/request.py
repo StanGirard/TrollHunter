@@ -1,20 +1,24 @@
 import datetime
 import pandas as pd
-from src.User import User
+from User import User
 from twint import twint
+from tweet_obj import Tweet_obj
 
 config = twint.Config()
 
-def get_info_from_user(username,args):
+
+def get_info_from_user(username, args):
     user = User(username)
-    get_info_user(user,config)
-    get_follower_user(user,config,args)
-    get_following_user(user,config,args)
-    get_list_tweets(user,config,args)
+    get_info_user(user, config)
+    get_follower_user(user, config, args)
+    get_following_user(user, config, args)
+    get_list_tweets(user, config, args)
 
     return "user"
-def get_follower_user(user,config,args):
-    get_twint_config(config,args)
+
+
+def get_follower_user(user, config, args):
+    get_twint_config(config, args)
     config.Username = user.username
     config.Followers = True
     config.Pandas_au = True
@@ -24,8 +28,9 @@ def get_follower_user(user,config,args):
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
 
-def get_following_user(user,config,args):
-    get_twint_config(config,args)
+
+def get_following_user(user, config, args):
+    get_twint_config(config, args)
     config.Username = user.username
     config.Pandas_au = True
     config.User_full = False
@@ -34,7 +39,8 @@ def get_following_user(user,config,args):
     twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
 
-def get_info_user(user,config):
+
+def get_info_user(user, config):
     config.Username = user.username
     config.User_full = True
     config.Profile_full = True
@@ -45,9 +51,9 @@ def get_info_user(user,config):
     twint.run.Lookup(config)
     user.set_info_to_df(twint.output.users_list[0])
 
-def get_list_tweets(user,config,args):
 
-    get_twint_config(config,args)
+def get_list_tweets(user, config, args):
+    get_twint_config(config, args)
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
@@ -59,30 +65,47 @@ def get_list_tweets(user,config,args):
     return twint.output.tweets_list
 
 
-def get_tweet_from_user(user,args):
+def get_tweet_from_user(user, args):
     # print("test")
     config.Username = user
     config.Search = None
-    tweets_result = get_list_tweets(user,config,args)
+    tweets_result = get_list_tweets(user, config, args)
     tweets_result_df = twint.output.panda.Tweets_df
-    return format_tweet_to_html(tweets_result,user)
+    return format_tweet_to_html(tweets_result, user)
+
 
 def get_tweet_from_search(args):
     config.Username = None
+    config.Store_object = True
     if not "search" in args:
         return " bad request"
     config.Search = args["search"]
     twint.output.tweets_list.clear()
     twint.run.Search(config)
-    tweet_result =  twint.output.tweets_list
+    tweet_result = twint.output.tweets_list
 
     tweets_result_df = twint.output.panda.Tweets_df
 
-    return format_tweet_to_html(tweet_result,"test")
+    return format_tweet_to_html(tweet_result, "test")
 
 
+def get_origin_tweet(tweet, date):
+    config.Username = None
+    config.Store_object = True
+    config.Search = tweet
+    config.Until = date
 
-def get_twint_config(config,args):
+    twint.output.tweets_list.clear()
+    twint.run.Search(config)
+
+    tweet_result = twint.output.tweets_list
+
+    tweets_result = [Tweet_obj(t) for t in tweet_result]
+
+    return tweet_result
+
+
+def get_twint_config(config, args):
     limit = 100
     since = datetime.date.today() - datetime.timedelta(days=10)
     since = since.isoformat()
@@ -104,11 +127,11 @@ def get_twint_config(config,args):
     config.Store_object = True
 
 
-def format_tweet_to_html(tweets_list,word):
+def format_tweet_to_html(tweets_list, word):
     ret = "<h1>tweet from {} </h1><br>".format(word)
     for tweet in tweets_list:
         ret += "date : {},  username : {}, name : {} like : {}, retweets count = {}, tweet : {} <br>".format(
-            tweet.datestamp+":"+tweet.timestamp,
+            tweet.datestamp + ":" + tweet.timestamp,
             tweet.username,
             tweet.name,
             tweet.likes_count,
@@ -116,4 +139,3 @@ def format_tweet_to_html(tweets_list,word):
             tweet.tweet
         )
     return ret
-
