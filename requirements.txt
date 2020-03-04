@@ -51,3 +51,4 @@ urllib3==1.25.8
 Werkzeug==1.0.0
 wsproto==0.15.0
 yarl==1.4.2
+psycopg2==2.8.4

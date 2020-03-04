@@ -3,6 +3,8 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup as Soup
 import pandas as pd
 import hashlib
+from database.postgres_database import insert_sitemap, update_sitemap, get_sitemap
+
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
 def parse_sitemap( url,headers):
@@ -27,9 +29,10 @@ def parse_sitemap( url,headers):
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
-            test = u.find('loc').string
-            panda_recursive = parse_sitemap(test, headers)
-            panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
+            if check_sitemap(u):
+                test = u.find('loc').string
+                panda_recursive = parse_sitemap(test, headers)
+                panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
     out = []
@@ -59,3 +62,19 @@ def parse_sitemap( url,headers):
 
     #returns the dataframe
     return panda_out
+
+
+def check_sitemap(sitemap):
+    loc = sitemap.find('loc').string
+    lastmod = sitemap.find('lastmod').string
+    data_sitemap = get_sitemap(loc)
+    if data_sitemap:
+        if lastmod and data_sitemap[1]:
+            if data_sitemap[1] != lastmod:
+                update_sitemap(loc, lastmod)
+            else:
+                return False
+    else:
+        insert_sitemap(loc, lastmod)
+    return True
+
