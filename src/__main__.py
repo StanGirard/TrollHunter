@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 
-from src.twint_api.request import get_tweet_from_search, get_tweet_from_user, get_info_from_user
+from twint_api.tasks import get_tweet_from_search, get_tweet_from_user, get_info_from_user
 
 app = Flask(__name__)
 

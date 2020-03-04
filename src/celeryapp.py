@@ -3,4 +3,5 @@ from celery import Celery
 
 app = Celery('twitter-crawler',
              broker='pyamqp://guest@142.93.170.234',
-             include=['src.twint_api.request'])
+             include=['twint_api.tasks'])
+

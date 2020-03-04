@@ -1,12 +1,9 @@
-import sys
-sys.path.insert(0, "../..")
 import datetime
 import pandas as pd
 
+from User import User
+from celeryapp import app
 from twint import twint
-
-from src.celeryapp import app
-from src.User import User
 
 config = twint.Config()
 
