@@ -9,11 +9,11 @@ import requests
 def safe_value(field_val):
     return field_val if not pd.isna(field_val) else "Other"
 
-use_these_keys = ["Source","loc", "lastmod"]
-def filterKeys(document):
+def filterKeys(document, headers):
+    use_these_keys = ["Source"] + headers
     return {key: document[key] for key in use_these_keys }
 
-def doc_generator(df):
+def doc_generator(df, headers):
     df_iter = df.iterrows()
     for index, document in df_iter:
         try:
@@ -21,20 +21,16 @@ def doc_generator(df):
                 "_index": 'sitemaps',
                 "_type": "_doc",
                 "_id" : f"{document['loc']}",
-                "_source": filterKeys(document),
+                "_source": filterKeys(document, headers),
             }
         except StopIteration:
             return
         
-   
+def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme"):
+    dataframe = parse_sitemap(url, headers)
+    print(dataframe)
+    es = Elasticsearch(hosts = [{'host': host, 'port': port}],http_auth=(user, password),)
+    print(helpers.bulk(es, doc_generator(dataframe, headers)))
 
-
-dataframe = parse_sitemap("https://primates.dev/sitemap.xml", ["loc", "lastmod"])
-
-
-url = "142.93.170.234"
-
-es = Elasticsearch(hosts = [{'host': url, 'port': 9200}],http_auth=('elastic', 'changeme'),)
-helpers.bulk(es, doc_generator(dataframe))
 
 
