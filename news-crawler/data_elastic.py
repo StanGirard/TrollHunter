@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import time
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from sitemap import parse_sitemap
@@ -28,6 +29,10 @@ def doc_generator(df, headers):
         
 def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme"):
     dataframe = parse_sitemap(url, headers)
+    if type(dataframe) == bool:
+        return
+
+    transform_none_lastmod(dataframe)
     print(dataframe)
 
     es = Elasticsearch(hosts = [{'host': host, 'port': port}],http_auth=(user, password),)
@@ -42,6 +47,15 @@ def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "
     if len(kept) > 0:
         print(len(kept), " doc(s) will be put in ES")
         print(helpers.bulk(es, iterator(kept)))
+
+def transform_none_lastmod(pdResult: pd.DataFrame):
+    for index, row in pdResult.iterrows():
+        date = row[2].split(".")[0]
+        timestamp = 0
+        if date != "None":
+            timestamp = time.mktime(time.strptime(date, '%Y-%m-%dT%H:%M:%S'))
+
+        row[2] = timestamp
 
 def iterator(ar):
     for item in ar:
