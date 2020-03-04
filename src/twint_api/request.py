@@ -10,7 +10,7 @@ def get_info_from_user(username,args):
     get_info_user(user,config)
     get_follower_user(user,config,args)
     get_following_user(user,config,args)
-
+    get_list_tweet()
 
     return "user"
 def get_follower_user(user,config,args):
@@ -45,7 +45,7 @@ def get_info_user(user,config):
     twint.run.Lookup(config)
     user.set_info_to_df(twint.output.users_list[0])
 
-def get_list_tweets(config,args):
+def get_list_tweets(user,config,args):
 
     get_twint_config(config,args)
     config.Profile = True
@@ -63,7 +63,7 @@ def get_tweet_from_user(user,args):
     # print("test")
     config.Username = user
     config.Search = None
-    tweets_result = get_list_tweets(config,args)
+    tweets_result = get_list_tweets(user,config,args)
     tweets_result_df = twint.output.panda.Tweets_df
     return format_tweet_to_html(tweets_result,user)
 
@@ -72,7 +72,10 @@ def get_tweet_from_search(args):
     if not "search" in args:
         return " bad request"
     config.Search = args["search"]
-    tweet_result = get_list_tweets(config,args)
+    twint.output.tweets_list.clear()
+    twint.run.Search(config)
+    tweet_result =  twint.output.tweets_list
+
     tweets_result_df = twint.output.panda.Tweets_df
 
     return format_tweet_to_html(tweet_result,"test")
