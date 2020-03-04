@@ -2,8 +2,7 @@ import psycopg2
 
 
 def connect_db():
-    conn = psycopg2.connect(host='server.trollhunter.guru', database='sitemap', user='trollhunter', password='trollhunter')
-    print('Connection database')
+    conn = psycopg2.connect(host='142.93.170.234', database='sitemap', user='trollhunter', password='trollhunter')
     return conn
 
 
@@ -11,7 +10,22 @@ def disconnect_db(conn, cur):
     if conn:
         cur.close()
         conn.close()
-        print('Database connection closed')
+
+
+def get_sitemap_parent():
+    conn = None
+    cur = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        query = """select * from sitemap where lastmod is null"""
+        cur.execute(query)
+        data = cur.fetchall()
+        return data
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        disconnect_db(conn, cur)
 
 
 def get_sitemap(id):
@@ -20,7 +34,7 @@ def get_sitemap(id):
     try:
         conn = connect_db()
         cur = conn.cursor()
-        query = """select * from sitemap where id = %s"""
+        query = """select * from sitemap where url = %s"""
         cur.execute(query, (id,))
         data = cur.fetchone()
         return data
@@ -36,24 +50,24 @@ def update_sitemap(id, data):
     try:
         conn = connect_db()
         cur = conn.cursor()
-        query = """update sitemap set last_loc = %s where id = %s"""
+        query = """update sitemap set lastmod = %s where url = %s"""
         cur.execute(query, (data, id))
         conn.commit()
-        print('Update sitemap last_loc %s whth %s' % (id, data))
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         disconnect_db(conn, cur)
 
 
-def insert_sitemap(data):
+def insert_sitemap(loc, lasmod):
     conn = None
     cur = None
     try:
         conn = connect_db()
         cur = conn.cursor()
-        query = """insert into sitemap values %s"""
-        cur.execute(query, data.str)
+        query = """insert into sitemap values (%s, %s)"""
+        cur.execute(query, (loc, lasmod))
+        conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
