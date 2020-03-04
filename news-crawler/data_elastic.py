@@ -32,5 +32,8 @@ def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "
     es = Elasticsearch(hosts = [{'host': host, 'port': port}],http_auth=(user, password),)
     print(helpers.bulk(es, doc_generator(dataframe, headers)))
 
+# to check if an id (here the url) already exists in the ES
+def check_id_in_es(es: Elasticsearch, index: str, id: str):
+    return es.exists(index, id)
 
 

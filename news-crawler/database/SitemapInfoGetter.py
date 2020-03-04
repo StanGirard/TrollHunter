@@ -25,4 +25,5 @@ class SitemapInfo:
 
             row[2] = timestamp
 
-        # print(self._pdResult)
+    def getResult(self):
+        return self._pdResult
