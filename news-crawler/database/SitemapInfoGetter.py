@@ -5,14 +5,15 @@ import time
 import pandas as pd
 
 class SitemapInfo:
-    def __init__(self, baseUrl):
+    def __init__(self, baseUrl, headers):
+        self._headers = headers
         self._baseUrl = baseUrl
         self._pdResult = self._retriveUrlsByMap(self._baseUrl)
         if self._pdResult is not False:
             self._fetchAllUrlInfo()
 
-    def _retriveUrlsByMap(self, map):
-        result = parse_sitemap(map, ["loc", "lastmod", "image:loc", "news:keywords", "news:title"])
+    def _retriveUrlsByMap(self, map, baseUrl, headers):
+        result = parse_sitemap(map, )
         # print(result)
         return result if result is not False else pd.DataFrame()
 
