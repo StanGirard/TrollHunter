@@ -50,7 +50,8 @@ def transform_none_lastmod(pdResult: pd.DataFrame):
         date = row[2].split(".")[0]
         timestamp = 0
         if date != "None":
-            timestamp = time.mktime(time.strptime(date, '%Y-%m-%dT%H:%M:%S'))
+            date_in = date[:19]
+            timestamp = time.mktime(time.strptime(date_in, '%Y-%m-%dT%H:%M:%S'))
 
         row[2] = timestamp
 
