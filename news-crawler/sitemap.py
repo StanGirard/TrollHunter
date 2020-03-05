@@ -66,9 +66,8 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
-            if check_sitemap(u, db_sitemaps[test]):
-
-                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb, range_check)
+            if check_sitemap(u, db_sitemaps.get(test)):
+                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb, range_check = range_check)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...

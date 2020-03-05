@@ -30,9 +30,9 @@ def doc_generator(df, headers):
             return
 
 def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
-    es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password), )
-	db_sitemap = {x[0]: x for x in get_all_sitemap()}
-    dataframe = parse_sitemap(url, headers, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb)
+    es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password) )
+    db_sitemap = {x[0]: x for x in get_all_sitemap()}
+    dataframe = parse_sitemap(url, headers, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb, range_check=20)
     print(dataframe)
     if type(dataframe) == bool:
         return

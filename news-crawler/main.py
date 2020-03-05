@@ -6,7 +6,7 @@ import pandas as pd
 from data_elastic import elastic_sitemap
 
 
-elastic_sitemap("https://primates.dev/sitemap.xml",["loc", "lastmod"], sort = "loc", influxdb = True)
+elastic_sitemap("https://epita.fr/sitemap_index.xml",["loc", "lastmod"], sort = "loc", influxdb = True)
 
 
 
