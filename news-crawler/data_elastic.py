@@ -32,6 +32,7 @@ def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "
     es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password), )
 
     dataframe = parse_sitemap(url, headers, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb)
+
     print(dataframe)
     if type(dataframe) == bool:
         return

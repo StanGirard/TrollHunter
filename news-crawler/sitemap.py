@@ -33,6 +33,7 @@ def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = 
     #Sorts the urls by the key specified
     if sort and urls:
         urls.sort(key=sort_loc)
+
     sitemaps = soup.findAll('sitemap')
     new_list = ["Source"] + headers
     panda_out_total = pd.DataFrame([], columns=new_list)
@@ -46,6 +47,7 @@ def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = 
         for u in sitemaps:
             if check_sitemap(u):
                 test = u.find('loc').string
+
                 panda_recursive = parse_sitemap(test, headers, es, sort, influxdb = influxdb)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
