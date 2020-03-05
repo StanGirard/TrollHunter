@@ -4,15 +4,23 @@ import pandas as pd
 from User import User
 from celeryapp import app
 from twint import twint
+from tweet_obj import Tweet_obj
 
 config = twint.Config()
 
 @app.task
 def get_info_from_user(username, args):
     user = User(username)
-    get_info_user(user, config)
-    get_follower_user(user, config, args)
-    get_following_user(user, config, args)
+    config.Username = user.username
+
+    get_twint_config(config,args)
+
+    get_info_user(user,config)
+    get_follower_user(user,config,args)
+    get_following_user(user,config,args)
+
+    get_tweet_from_user(user.username,config,args)
+
     return "user"
 
 @app.task
@@ -54,25 +62,22 @@ def get_info_user(user, config):
 
 
 @app.task
-def get_list_tweets(config, args):
+def get_list_tweets(user, config, args):
     get_twint_config(config, args)
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
-    if config.Retweets:
-        twint.run.Profile(config)
-    else:
-        twint.run.Search(config)
+    twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
 
 @app.task
-def get_tweet_from_user(user, args):
+def get_tweet_from_user(user,config,args,):
     # print("test")
-    config.Username = user
+    get_twint_config(config,args)
     config.Search = None
-    tweets_result = get_list_tweets(config, args)
+    tweets_result = get_list_tweets(user, config, args)
     tweets_result_df = twint.output.panda.Tweets_df
     return format_tweet_to_html(tweets_result, user)
 
@@ -80,13 +85,47 @@ def get_tweet_from_user(user, args):
 @app.task
 def get_tweet_from_search(args):
     config.Username = None
+    config.Store_object = True
     if not "search" in args:
         return " bad request"
     config.Search = args["search"]
-    tweet_result = get_list_tweets(config, args)
+    twint.output.tweets_list.clear()
+    twint.run.Search(config)
+    tweet_result = twint.output.tweets_list
+
     tweets_result_df = twint.output.panda.Tweets_df
 
     return format_tweet_to_html(tweet_result, "test")
+
+
+def get_origin_tweet(args):
+    if "search" not in args:
+        return " bad request"
+    tweet = args["search"]
+    config.Username = None
+    config.Store_object = True
+    config.Search = tweet
+
+    twint.output.tweets_list.clear()
+    twint.run.Search(config)
+
+    tweets = twint.output.tweets_list
+
+    tweet_result = reversed([Tweet_obj(t) for t in tweets])
+    origin = None
+
+    for t in tweet_result:
+        if t.check_equal(tweet):
+            origin = t
+            break
+
+    res = []
+
+    if origin:
+        origin.pretty_print()
+        res.append(origin)
+
+    return format_tweet_to_html(res, "ORIGIN")
 
 
 def get_twint_config(config, args):
@@ -99,6 +138,8 @@ def get_twint_config(config, args):
         limit = int(args["limit"])
     if "since" in args:
         since = args["since"]
+    if "until" in args:
+        until = args["until"]
     if "retweet" in args:
         retweet = args["retweet"].lower() == "true"
 
@@ -107,6 +148,7 @@ def get_twint_config(config, args):
     config.Limit = limit
     config.Retweets = retweet
     config.Since = since
+    config.until = until
     config.Pandas = True
     config.Store_object = True
 
