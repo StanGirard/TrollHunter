@@ -79,7 +79,7 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     # Extract the keys we want
     count = 1
     for u in urls:
-        if count % range_check == 0 and check_id_in_es(es, indexEs, u.find("loc").string):
+        if count % range_check == 0 and not check_id_in_es(es, indexEs, u.find("loc").string):
             count = 1
         
         values = [hash_sitemap]
