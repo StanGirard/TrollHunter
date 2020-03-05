@@ -22,14 +22,17 @@ def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
     out_cleaned = []
     ranges = rangeOut
     lenOut = len(out)
-    
     if lenOut > 0:
         if (rangeOut > lenOut ):
             ranges = lenOut
+
+
         for i in range(lenOut - 1, lenOut - 1 - ranges, -1):
             value = out[i][1]
-            if check_id_in_es(es, indexEs, value):
+            if not check_id_in_es(es, "sitemaps", str(value)):
                 out_cleaned.append(out[i])
+                
+            
         print("length sitemap: " +  str(len(out_cleaned)))
     return out_cleaned
 
@@ -60,10 +63,9 @@ def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = 
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
-            if check_sitemap(u):
-                test = u.find('loc').string
-                panda_recursive = parse_sitemap(test, headers, es, sort, influxdb = influxdb)
-                panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
+            test = u.find('loc').string
+            panda_recursive = parse_sitemap(test, headers, es, sort, influxdb = influxdb)
+            panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
     out = []
