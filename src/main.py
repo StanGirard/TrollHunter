@@ -19,9 +19,11 @@ def user_tweet(user):
 
 @app.route('/tweets/', methods=['GET'])
 def search_tweet():
-    return get_origin_tweet(request.args)
-#    return get_tweet_from_search(request.args)
+   return get_tweet_from_search(request.args)
 
+@app.route('/tweets/origin/', methods=['GET'])
+def origin_tweet():
+    return get_origin_tweet(request.args)
 
 
 

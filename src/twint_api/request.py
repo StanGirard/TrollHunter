@@ -94,6 +94,7 @@ def get_tweet_from_search(args):
 def get_origin_tweet(args):
     if "search" not in args:
         return " bad request"
+    get_twint_config(config,args)
     tweet = args["search"]
     config.Username = None
     config.Store_object = True
@@ -123,10 +124,9 @@ def get_origin_tweet(args):
 
 def get_twint_config(config, args):
     limit = 100
-    since = datetime.date.today() - datetime.timedelta(days=10)
-    since = since.isoformat()
+    since = None
     retweet = False
-
+    until = None
     if "limit" in args:
         limit = int(args["limit"])
     if "since" in args:
@@ -141,7 +141,7 @@ def get_twint_config(config, args):
     config.Limit = limit
     config.Retweets = retweet
     config.Since = since
-    config.until = until
+    config.Until = until
     config.Pandas = True
     config.Store_object = True
 
