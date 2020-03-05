@@ -3,7 +3,8 @@ import pandas as pd
 import time
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
-from sitemap import parse_sitemap
+
+from sitemap import parse_sitemap, check_id_in_es
 import requests
 
 #Check for empty values
@@ -28,21 +29,23 @@ def doc_generator(df, headers):
             return
 
 def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
-    dataframe = parse_sitemap(url, headers, sort, influxdb = influxdb)
+    es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password), )
+
+    dataframe = parse_sitemap(url, headers, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb)
+    print(dataframe)
     if type(dataframe) == bool:
         return
 
     transform_none_lastmod(dataframe)
-    print(dataframe)
-
-    es = Elasticsearch(hosts = [{'host': host, 'port': port}],http_auth=(user, password),)
 
     kept = []
+    count = 1
     for dic in doc_generator(dataframe, headers):
         if not check_id_in_es(es, dic["_index"], dic["_id"]):
             kept.append(dic)
         else:
-            print("Already " + dic["_id"])
+            print("Already " + dic["_id"], count)
+        count += 1
 
     if len(kept) > 0:
         print(len(kept), " doc(s) will be put in ES")
@@ -63,9 +66,3 @@ def iterator(ar):
             yield item
         except StopIteration:
             return
-
-# to check if an id (here the url) already exists in the ES
-def check_id_in_es(es: Elasticsearch, index: str, id: str):
-    return es.exists(index, id)
-
-

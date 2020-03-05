@@ -16,7 +16,7 @@ headers = ["loc", "lastmod", "image:loc", "news:keywords", "news:title"]
 
 for row in cursor:
     site_map_url = row[1]+row[2]
-    deMod.elastic_sitemap(site_map_url, headers)
+    deMod.elastic_sitemap(site_map_url, headers, sort = "lastmod")
 
 print("Operation done successfully")
 conn.close()
