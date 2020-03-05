@@ -19,7 +19,7 @@ def sort_loc(x):
     return res.string if res else "None"
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
-def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False):
+def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False):
     resp = requests.get(url)
 
     # we didn't get a valid response, bail
@@ -45,10 +45,10 @@ def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = 
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
-            if check_sitemap(u):
-                test = u.find('loc').string
+            test = u.find('loc').string
+            if check_sitemap(u, db_sitemaps[test]):
 
-                panda_recursive = parse_sitemap(test, headers, es, sort, influxdb = influxdb)
+                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
@@ -92,10 +92,9 @@ def build_panda_out(out, panda_out_total, new_list):
     # returns the dataframe
     return panda_out
 
-def check_sitemap(sitemap):
+def check_sitemap(sitemap, data_sitemap):
     loc = sitemap.find('loc').string
     lastmod = sitemap.find('lastmod').string
-    data_sitemap = get_sitemap(loc)
     if data_sitemap:
         if lastmod and data_sitemap[1]:
             if data_sitemap[1] != lastmod:
