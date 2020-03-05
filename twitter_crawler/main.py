@@ -1,7 +1,7 @@
 from flask import Flask, request
 from multiprocessing.dummy import Pool, Manager
 
-from src.twint_api.request import get_tweet_from_user, get_tweet_from_search, get_info_from_user, get_origin_tweet
+from twitter_crawler.twint_api.request import get_info_from_user, get_tweet_from_search, get_origin_tweet
 
 app = Flask(__name__)
 # api = Api(app)

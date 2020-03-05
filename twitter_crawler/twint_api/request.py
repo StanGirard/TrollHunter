@@ -1,8 +1,7 @@
 import datetime
 import pandas as pd
-from src.User import User
 from twint import twint
-from src.tweet_obj import Tweet_obj
+from twitter_crawler.User import User
 
 config = twint.Config()
 
