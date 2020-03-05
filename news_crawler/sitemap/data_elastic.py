@@ -4,8 +4,8 @@ import time
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
-from sitemap import parse_sitemap, check_id_in_es
-from database.postgres_database import get_all_sitemap
+from news_crawler.sitemap.sitemap import parse_sitemap, check_id_in_es
+from news_crawler.database.postgres_database import get_all_sitemap
 import requests
 
 #Check for empty values
