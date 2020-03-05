@@ -12,7 +12,9 @@ queue_data = manager.Queue()
 
 @app.route('/tweets/<string:user>', methods=['GET'])
 def user_tweet(user):
-    return get_tweet_from_user(user, request.args)
+
+    get_info_from_user(user,request.args)
+    return "200"
 
 
 @app.route('/tweets/', methods=['GET'])
@@ -21,9 +23,6 @@ def search_tweet():
 #    return get_tweet_from_search(request.args)
 
 
-@app.route('/user/info/<string:user>', methods=['GET'])
-def user_info(user):
-    return get_info_from_user(user, request.args)
 
 
 if __name__ == '__main__':

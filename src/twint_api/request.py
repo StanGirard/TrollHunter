@@ -9,10 +9,15 @@ config = twint.Config()
 
 def get_info_from_user(username, args):
     user = User(username)
-    get_info_user(user, config)
-    get_follower_user(user, config, args)
-    get_following_user(user, config, args)
-    get_list_tweets(user, config, args)
+    config.Username = user.username
+
+    get_twint_config(config,args)
+
+    get_info_user(user,config)
+    get_follower_user(user,config,args)
+    get_following_user(user,config,args)
+
+    get_tweet_from_user(user.username,config,args)
 
     return "user"
 
@@ -57,17 +62,14 @@ def get_list_tweets(user, config, args):
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
-    if config.Retweets:
-        twint.run.Profile(config)
-    else:
-        twint.run.Search(config)
+    twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
 
-def get_tweet_from_user(user, args):
+def get_tweet_from_user(user,config,args,):
     # print("test")
-    config.Username = user
+    get_twint_config(config,args)
     config.Search = None
     tweets_result = get_list_tweets(user, config, args)
     tweets_result_df = twint.output.panda.Tweets_df
