@@ -18,8 +18,29 @@ def sort_loc(x):
     res = x.find("loc")
     return res.string if res else "None"
 
+def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
+    out_cleaned = []
+    ranges = rangeOut
+    lenOut = len(out)
+    if lenOut > 0:
+        if (rangeOut > lenOut ):
+            ranges = lenOut
+
+
+        for i in range(lenOut - 1, lenOut - 1 - ranges, -1):
+            value = out[i][1]
+            if not check_id_in_es(es, "sitemaps", str(value)):
+                out_cleaned.append(out[i])
+                
+            
+        print("length sitemap: " +  str(len(out_cleaned)))
+    return out_cleaned
+
+
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
-def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False):
+
+def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False, range_check = 20):
+
     resp = requests.get(url)
 
     # we didn't get a valid response, bail
@@ -33,7 +54,6 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     #Sorts the urls by the key specified
     if sort and urls:
         urls.sort(key=sort_loc)
-
     sitemaps = soup.findAll('sitemap')
     new_list = ["Source"] + headers
     panda_out_total = pd.DataFrame([], columns=new_list)
@@ -46,9 +66,8 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
-            if check_sitemap(u, db_sitemaps[test]):
-
-                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb)
+            if check_sitemap(u, db_sitemaps.get(test)):
+                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb, range_check = range_check)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
@@ -58,11 +77,11 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     hash_sitemap = hashlib.md5(str(url).encode('utf-8')).hexdigest()
 
     # Extract the keys we want
-    count = 0
+    count = 1
     for u in urls:
-        if count % 10 == 0:
-            if not check_id_in_es(es, indexEs, u.find("loc").string):
-                count = 0
+        if count % range_check == 0 and check_id_in_es(es, indexEs, u.find("loc").string):
+            count = 1
+        
         values = [hash_sitemap]
         #Log into influxdb
         if_influx_url(influxdb, url)
@@ -75,11 +94,12 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
                 loc = loc.string
             values.append(loc)
         out.append(values)
+        if count == range_check:
+            out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
+            return build_panda_out(out_cleaned, panda_out_total, new_list)
         count += 1
-        if count == 20:
-            return build_panda_out(out, panda_out_total, new_list)
-
-    return build_panda_out(out, panda_out_total, new_list)
+    out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
+    return build_panda_out(out_cleaned, panda_out_total, new_list)
 
 def build_panda_out(out, panda_out_total, new_list):
     # Create a dataframe

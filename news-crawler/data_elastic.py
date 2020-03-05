@@ -30,27 +30,20 @@ def doc_generator(df, headers):
             return
 
 def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
-    es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password), )
-	db_sitemap = {x[0]: x for x in get_all_sitemap()}
-    dataframe = parse_sitemap(url, headers, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb)
+    es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password) )
+    db_sitemap = {x[0]: x for x in get_all_sitemap()}
+    dataframe = parse_sitemap(url, headers, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb, range_check=20)
     print(dataframe)
     if type(dataframe) == bool:
         return
 
     transform_none_lastmod(dataframe)
-
-    kept = []
-    count = 1
-    for dic in doc_generator(dataframe, headers):
-        if not check_id_in_es(es, dic["_index"], dic["_id"]):
-            kept.append(dic)
-        else:
-            print("Already " + dic["_id"], count)
-        count += 1
-
-    if len(kept) > 0:
-        print(len(kept), " doc(s) will be put in ES")
-        print(helpers.bulk(es, iterator(kept)))
+    length_dataframe = len(dataframe.index)
+    if length_dataframe > 0:
+        print(length_dataframe, " doc(s) will be put in ES")
+        print(helpers.bulk(es, doc_generator(dataframe, headers)))
+    else:
+        print("No new value")
 
 def transform_none_lastmod(pdResult: pd.DataFrame):
     for index, row in pdResult.iterrows():
