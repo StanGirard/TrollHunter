@@ -6,17 +6,21 @@ from news_crawler.database.postgres_database import insert_sitemap, update_sitem
 from loggers.InfluxLog import InfluxDBLog
 from elasticsearch import Elasticsearch
 
+
 # to check if an id (here the url) already exists in the ES
 def check_id_in_es(es: Elasticsearch, index: str, id: str):
     return es.exists(index, id)
+
 
 def if_influx_url(influxdb, url):
     if influxdb:
         InfluxDBLog().addEntry("Sitemap", "Crawling", 1, "URL", url )
 
+
 def sort_loc(x):
     res = x.find("loc")
     return res.string if res else "None"
+
 
 def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
     out_cleaned = []
@@ -58,15 +62,17 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     new_list = ["Source"] + headers
     panda_out_total = pd.DataFrame([], columns=new_list)
 
-
     if not urls and not sitemaps:
         return False
+
+    sitemap_db = db_sitemaps.get(url)
+    url_headers = sitemap_db[2] if sitemap_db and sitemap_db[2] else headers
 
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
-            if check_sitemap(u, db_sitemaps.get(test)):
+            if check_sitemap(u, db_sitemaps.get(test), url_headers):
                 panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb, range_check = range_check)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
@@ -85,7 +91,7 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
         values = [hash_sitemap]
         #Log into influxdb
         if_influx_url(influxdb, url)
-        for head in headers:
+        for head in url_headers:
             loc = None
             loc = u.find(head)
             if not loc:
@@ -101,6 +107,7 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
     return build_panda_out(out_cleaned, panda_out_total, new_list)
 
+
 def build_panda_out(out, panda_out_total, new_list):
     # Create a dataframe
     panda_out = pd.DataFrame(out, columns=new_list)
@@ -112,16 +119,17 @@ def build_panda_out(out, panda_out_total, new_list):
     # returns the dataframe
     return panda_out
 
-def check_sitemap(sitemap, data_sitemap):
+
+def check_sitemap(sitemap, data_sitemap, headers):
     loc = sitemap.find('loc').string
-    lastmod = sitemap.find('lastmod').string
+    lastmod = sitemap.find('lastmod')
     if data_sitemap:
         if lastmod and data_sitemap[1]:
-            if data_sitemap[1] != lastmod:
-                update_sitemap(loc, lastmod)
+            if data_sitemap[1] != lastmod.string:
+                update_sitemap(loc, lastmod.string)
             else:
                 return False
     else:
-        insert_sitemap(loc, lastmod)
+        insert_sitemap(loc, lastmod.string, headers)
     return True
 
