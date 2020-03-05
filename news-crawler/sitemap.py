@@ -38,7 +38,9 @@ def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
 
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
-def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False, range_check = 20):
+
+def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False, range_check = 20):
+
     resp = requests.get(url)
 
     # we didn't get a valid response, bail
@@ -64,8 +66,10 @@ def parse_sitemap( url,headers, es: Elasticsearch, indexEs = "sitemaps", sort = 
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
-            panda_recursive = parse_sitemap(test, headers, es, sort, influxdb = influxdb)
-            panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
+            if check_sitemap(u, db_sitemaps[test]):
+
+                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb, range_check)
+                panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
     out = []
@@ -109,10 +113,9 @@ def build_panda_out(out, panda_out_total, new_list):
     # returns the dataframe
     return panda_out
 
-def check_sitemap(sitemap):
+def check_sitemap(sitemap, data_sitemap):
     loc = sitemap.find('loc').string
     lastmod = sitemap.find('lastmod').string
-    data_sitemap = get_sitemap(loc)
     if data_sitemap:
         if lastmod and data_sitemap[1]:
             if data_sitemap[1] != lastmod:

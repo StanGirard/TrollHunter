@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
 from sitemap import parse_sitemap, check_id_in_es
+from database.postgres_database import get_all_sitemap
 import requests
 
 #Check for empty values
@@ -30,9 +31,8 @@ def doc_generator(df, headers):
 
 def elastic_sitemap(url, headers, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
     es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password), )
-
-    dataframe = parse_sitemap(url, headers, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb)
-
+	db_sitemap = {x[0]: x for x in get_all_sitemap()}
+    dataframe = parse_sitemap(url, headers, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb)
     print(dataframe)
     if type(dataframe) == bool:
         return

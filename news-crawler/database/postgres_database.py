@@ -28,6 +28,22 @@ def get_sitemap_parent():
         disconnect_db(conn, cur)
 
 
+def get_all_sitemap():
+    conn = None
+    cur = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        query = """select * from sitemap"""
+        cur.execute(query)
+        data = cur.fetchall()
+        return data
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        disconnect_db(conn, cur)
+
+
 def get_sitemap(id):
     conn = None
     cur = None
