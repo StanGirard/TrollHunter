@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup as Soup
 import pandas as pd
 import hashlib
-from database.postgres_database import insert_sitemap, update_sitemap, get_sitemap
-from InfluxLog import InfluxDBLog
+from news_crawler.database.postgres_database import insert_sitemap, update_sitemap, get_sitemap
+from loggers.InfluxLog import InfluxDBLog
 from elasticsearch import Elasticsearch
 
 # to check if an id (here the url) already exists in the ES
