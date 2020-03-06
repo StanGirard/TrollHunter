@@ -9,7 +9,7 @@ summary: Everything we need to save
 
 # Kibana
 
-Link is [http://kibana.trollhunter.guru](http://kibana.trollhunter.guru)
+Link is [http://server.trollhunter.guru:5601/](http://server.trollhunter.guru:5601/)
 Login: elastic, mdp: changeme
 
 # Server
