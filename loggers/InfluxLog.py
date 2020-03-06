@@ -11,7 +11,7 @@ class InfluxDBLog:
         return cls.singleton  
 
     def __init__(self):
-        self.client_influxDB = InfluxDBClient("localhost",
+        self.client_influxDB = InfluxDBClient("server.trollhunter.guru",
                                                 8086,
                                                 "instapy",
                                                 "password",
