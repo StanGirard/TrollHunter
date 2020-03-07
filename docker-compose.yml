@@ -124,7 +124,7 @@ services:
         read_only: true
     ports:
       - "5601:5601"
-    environments:
+    environment:
       - VIRTUAL_HOST=kibana.trollhunter.guru
     networks:
       - elk
