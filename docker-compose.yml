@@ -1,5 +1,11 @@
 version: '3.2'
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
   influxdb:
     image: influxdb:latest
     ports:
@@ -38,6 +44,7 @@ services:
       - influxdb
     
     environment:
+      - VIRTUAL_HOST=grafana.trollhunter.guru
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
   db:
@@ -72,7 +79,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ES_JAVA_OPTS: "-Xmx1G -Xms1G"
       ELASTIC_PASSWORD: changeme
       # Use single node discovery in order to disable production mode and avoid bootstrap checks
       # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
@@ -117,6 +124,8 @@ services:
         read_only: true
     ports:
       - "5601:5601"
+    environments:
+      - VIRTUAL_HOST=kibana.trollhunter.guru
     networks:
       - elk
     depends_on:
