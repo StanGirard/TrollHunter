@@ -75,14 +75,14 @@ def update_sitemap(id, data):
         disconnect_db(conn, cur)
 
 
-def insert_sitemap(loc, lasmod):
+def insert_sitemap(loc, lasmod, url_headers):
     conn = None
     cur = None
     try:
         conn = connect_db()
         cur = conn.cursor()
-        query = """insert into sitemap values (%s, %s)"""
-        cur.execute(query, (loc, lasmod))
+        query = """insert into sitemap values (%s, %s, %s)"""
+        cur.execute(query, (loc, lasmod, url_headers))
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
