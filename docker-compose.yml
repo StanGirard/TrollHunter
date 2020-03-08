@@ -6,6 +6,9 @@ services:
     container_name: production_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
   influxdb:
     image: influxdb:latest
     ports:
