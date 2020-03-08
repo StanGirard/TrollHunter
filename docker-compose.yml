@@ -9,6 +9,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    networks:
+      - elk
   influxdb:
     image: influxdb:latest
     ports:
@@ -22,6 +24,8 @@ services:
       - INFLUXDB_DB=${INFLUX_DB}
       - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
       - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD}
+    networks:
+      - elk
   chronograf:
     image: chronograf:latest
     ports:
@@ -34,6 +38,8 @@ services:
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
       - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+    networks:
+      - elk
   grafana:
     image: grafana/grafana:latest
     command: cfg:default.users.allow_sign_up=false
@@ -50,6 +56,8 @@ services:
       - VIRTUAL_HOST=grafana.trollhunter.guru
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    networks:
+      - elk
   db:
     image: postgres
     restart: always
@@ -59,12 +67,16 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - elk
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - elk
   elasticsearch:
     build:
       context: docker-elk/elasticsearch/
