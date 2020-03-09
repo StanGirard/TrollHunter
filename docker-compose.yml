@@ -1,0 +1,171 @@
+version: '3.2'
+# https://www.domysee.com/blogposts/reverse-proxy-nginx-docker-compose
+services:
+  nginx: 
+    image: nginx:latest
+    container_name: production_nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - elk
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - "8086:8086"
+      - "8082:8082"
+      # UDP Port
+      - "8089:8089"
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    expose:
+      - "8086"
+    environment:
+      - INFLUXDB_DB=${INFLUX_DB}
+      - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
+      - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD}
+    networks:
+      - elk
+  chronograf:
+    image: chronograf:latest
+    ports:
+      - '127.0.0.1:8888:8888'
+    volumes:
+      - chronograf-storage:/var/lib/chronograf
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+      - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+    networks:
+      - elk
+  grafana:
+    image: grafana/grafana:latest
+    command: cfg:default.users.allow_sign_up=false
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    depends_on:
+      - influxdb
+    expose:
+      - "3000"
+    
+    environment:
+      - VIRTUAL_HOST=grafana.trollhunter.guru
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    networks:
+      - elk
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: trollhunter
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - elk
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - elk
+  elasticsearch:
+    build:
+      context: docker-elk/elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./docker-elk/elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx1G -Xms1G"
+      ELASTIC_PASSWORD: changeme
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks
+      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    networks:
+      - elk
+
+  logstash:
+    build:
+      context: docker-elk/logstash/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./docker-elk/logstash/config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./docker-elk/logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx1G -Xms1G"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    build:
+      context: docker-elk/kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./docker-elk/kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    environment:
+      - VIRTUAL_HOST=kibana.trollhunter.guru
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+  rabbitmq:
+    
+    image: 'rabbitmq:3.8.2-management'
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    networks:
+      - elk
+
+networks:
+  elk:
+    driver: bridge
+  
+volumes:
+  elasticsearch:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:

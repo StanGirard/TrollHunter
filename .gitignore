@@ -8,3 +8,5 @@
 /.idea/*
 __pycache__/
 news-crawler/__pycache__/
+/venv
+postgres-data/

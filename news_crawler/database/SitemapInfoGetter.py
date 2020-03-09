@@ -2,19 +2,20 @@ import sys
 sys.path.append("../")
 from sitemap import parse_sitemap
 import time
+import pandas as pd
 
 class SitemapInfo:
-    def __init__(self, baseUrl):
+    def __init__(self, baseUrl, headers):
+        self._headers = headers
         self._baseUrl = baseUrl
         self._pdResult = self._retriveUrlsByMap(self._baseUrl)
         if self._pdResult is not False:
             self._fetchAllUrlInfo()
 
-    def _retriveUrlsByMap(self, map):
-        result = parse_sitemap(map, ["loc", "lastmod", "image:loc", "news:keywords", "news:title"])
-        # for each urls, get info
+    def _retriveUrlsByMap(self, map, baseUrl, headers):
+        result = parse_sitemap(map, )
         # print(result)
-        return result
+        return result if result is not False else pd.DataFrame()
 
     def _fetchAllUrlInfo(self):
         for index, row in self._pdResult.iterrows():
@@ -25,4 +26,5 @@ class SitemapInfo:
 
             row[2] = timestamp
 
-        # print(self._pdResult)
+    def getResult(self) -> pd.DataFrame:
+        return self._pdResult
