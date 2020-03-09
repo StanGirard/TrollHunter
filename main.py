@@ -6,7 +6,7 @@ import pandas as pd
 from news_crawler.sitemap.data_elastic import elastic_sitemap
 
 
-elastic_sitemap("https://www.epitech.eu/sitemap_index.xml",["loc", "lastmod"], sort = "loc", influxdb = True)
+elastic_sitemap("https://www.lemonde.fr/sitemap_news.xml",["loc", "lastmod", "news:keywords"], sort = "loc", influxdb = True)
 
 
 

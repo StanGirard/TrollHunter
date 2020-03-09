@@ -104,8 +104,11 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
             out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
             return build_panda_out(out_cleaned, panda_out_total, new_list)
         count += 1
-    out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
-    return build_panda_out(out_cleaned, panda_out_total, new_list)
+    if len(out) < range_check:
+        out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
+        return build_panda_out(out_cleaned, panda_out_total, new_list)
+    else: 
+        return build_panda_out(out, panda_out_total, new_list)
 
 
 def build_panda_out(out, panda_out_total, new_list):
