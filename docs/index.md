@@ -34,5 +34,4 @@ mdp: trollhunter
 
 # Twitter crawler
 ## Launch worker
-Depuis src:
-  celery -A tasks worker --loglevel=info --app=celeryapp
+  celery -A request worker --loglevel=info --app=twitter_crawler.celeryapp
