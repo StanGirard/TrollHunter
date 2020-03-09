@@ -22,8 +22,8 @@ def get_info_from_user(username, args):
     return "user"
 
 @app.task
-def get_follower_user(user, config, args):
-    get_twint_config(config, args)
+def get_follower_user(user, args):
+    get_twint_config(args)
     config.Username = user.username
     config.Followers = True
     config.Pandas_au = True
@@ -35,8 +35,8 @@ def get_follower_user(user, config, args):
 
 
 @app.task
-def get_following_user(user, config, args):
-    get_twint_config(config, args)
+def get_following_user(user,  args):
+    get_twint_config( args)
     config.Username = user.username
     config.Pandas_au = True
     config.User_full = False
@@ -47,7 +47,7 @@ def get_following_user(user, config, args):
 
 
 @app.task
-def get_info_user(user, config):
+def get_info_user(user):
     config.Username = user.username
     config.User_full = True
     config.Profile_full = True
@@ -61,8 +61,8 @@ def get_info_user(user, config):
 
 
 @app.task
-def get_list_tweets( config, args):
-    get_twint_config(config, args)
+def get_list_tweets(  args):
+    get_twint_config( args)
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
@@ -72,9 +72,9 @@ def get_list_tweets( config, args):
 
 
 @app.task
-def get_tweet_from_user(user,config,args,):
+def get_tweet_from_user(user,args,):
     # print("test")
-    get_twint_config(config,args)
+    get_twint_config(args)
     config.Search = None
     tweets_result = get_list_tweets(config, args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
@@ -130,7 +130,7 @@ def get_origin_tweet(args):
     return format_tweet_to_html(res, "ORIGIN")
 
 
-def get_twint_config(config, args):
+def get_twint_config( args):
     limit = 100
     since = None
     retweet = False
