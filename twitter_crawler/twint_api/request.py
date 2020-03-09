@@ -1,6 +1,5 @@
 import datetime
-import pandas as pd
-from twint import twint
+from twitter_crawler.twint import twint
 from twitter_crawler.User import User
 from twitter_crawler.tweet_obj import Tweet_obj
 
@@ -30,7 +29,7 @@ def get_follower_user(user, config, args):
     config.User_full = False
     config.Store_object = True
     config.Limit = user.info_df.loc[0]["followers"]
-    twint.run.Followers(config)
+    twitter_crawler.twint.twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
 
 
@@ -41,7 +40,7 @@ def get_following_user(user, config, args):
     config.User_full = False
     config.Store_object = True
     config.Limit = user.info_df.loc[0]["following"]
-    twint.run.Following(config)
+    twitter_crawler.twint.twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
 
 
@@ -53,8 +52,8 @@ def get_info_user(user, config):
     config.Store_object = True
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
-    twint.run.Search(config)
-    twint.run.Lookup(config)
+    twitter_crawler.twint.twint.run.Search(config)
+    twitter_crawler.twint.twint.run.Lookup(config)
     user.set_info_to_df(twint.output.users_list[0])
 
 
@@ -63,7 +62,7 @@ def get_list_tweets(user, config, args):
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
-    twint.run.Profile(config)
+    twitter_crawler.twint.twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
@@ -85,7 +84,7 @@ def get_tweet_from_search(args):
         return " bad request"
     config.Search = args["search"]
     twint.output.tweets_list.clear()
-    twint.run.Search(config)
+    twitter_crawler.twint.twint.run.Search(config)
     tweet_result = twint.output.tweets_list
 
     tweets_result_df = twint.output.panda.Tweets_df
@@ -103,7 +102,7 @@ def get_origin_tweet(args):
     config.Search = tweet
 
     twint.output.tweets_list.clear()
-    twint.run.Search(config)
+    twitter_crawler.twint.twint.run.Search(config)
 
     tweets = twint.output.tweets_list
 
