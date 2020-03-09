@@ -151,7 +151,7 @@ services:
       - elasticsearch
   rabbitmq:
     
-    image: 'rabbitmq:latest'
+    image: 'rabbitmq:3.8.2-management'
     ports:
       # The standard AMQP protocol port
       - '5672:5672'
