@@ -17,7 +17,7 @@ def get_info_from_user(username, args):
     get_follower_user(user,config,args)
     get_following_user(user,config,args)
 
-    get_tweet_from_user(user.username,config,args)
+    get_tweet_from_user(user,config,args)
 
     return "user"
 
@@ -61,7 +61,7 @@ def get_info_user(user, config):
 
 
 @app.task
-def get_list_tweets(user, config, args):
+def get_list_tweets( config, args):
     get_twint_config(config, args)
     config.Profile = True
     config.Profile_full = True
@@ -76,10 +76,10 @@ def get_tweet_from_user(user,config,args,):
     # print("test")
     get_twint_config(config,args)
     config.Search = None
-    tweets_result = get_list_tweets(user, config, args)
+    tweets_result = get_list_tweets(config, args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
 
-    return format_tweet_to_html(tweets_result, user)
+    return format_tweet_to_html(tweets_result, user.username)
 
 
 @app.task
