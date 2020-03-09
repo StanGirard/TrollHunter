@@ -2,6 +2,7 @@ import datetime
 import pandas as pd
 from twint import twint
 from twitter_crawler.User import User
+from twitter_crawler.tweet_obj import Tweet_obj
 
 config = twint.Config()
 
@@ -48,6 +49,7 @@ def get_info_user(user, config):
     config.Username = user.username
     config.User_full = True
     config.Profile_full = True
+    config.Pandas = False
     config.Store_object = True
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
@@ -71,7 +73,8 @@ def get_tweet_from_user(user,config,args,):
     get_twint_config(config,args)
     config.Search = None
     tweets_result = get_list_tweets(user, config, args)
-    tweets_result_df = twint.output.panda.Tweets_df
+    user.set_tweet_df(twint.output.panda.Tweets_df)
+
     return format_tweet_to_html(tweets_result, user)
 
 

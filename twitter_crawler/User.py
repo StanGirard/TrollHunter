@@ -12,3 +12,6 @@ class User:
 
     def set_following_df(self,follow):
         self.following_df = follow
+
+    def set_tweet_df(self,tweet):
+        self.tweets_df = tweet
