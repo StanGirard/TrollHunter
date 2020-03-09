@@ -149,6 +149,16 @@ services:
       - elk
     depends_on:
       - elasticsearch
+  rabbitmq:
+    
+    image: 'rabbitmq:latest'
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    networks:
+      - elk
 
 networks:
   elk:
