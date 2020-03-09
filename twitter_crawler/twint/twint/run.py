@@ -1,6 +1,5 @@
 import sys, os, time
 from asyncio import get_event_loop, TimeoutError, ensure_future, new_event_loop, set_event_loop
-from datetime import datetime
 
 from . import datelock, feed, get, output, verbose, storage
 from .storage import db

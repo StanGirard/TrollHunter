@@ -7,6 +7,9 @@ permalink: index.html
 summary: Everything we need to save
 ---
 
+
+  
+
 # Kibana
 
 Link is [http://server.trollhunter.guru:5601/](http://server.trollhunter.guru:5601/)
@@ -28,3 +31,7 @@ Link is [http://server.trollhunter.guru](http://server.trollhunter.guru)
 http://server.trollhunter.guru:8080/ for adminer
 login: postgres
 mdp: trollhunter
+
+# Twitter crawler
+## Launch worker
+  celery -A request worker --loglevel=info --app=twitter_crawler.celeryapp

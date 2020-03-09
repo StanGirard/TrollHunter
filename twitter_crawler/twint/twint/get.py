@@ -1,5 +1,4 @@
 from async_timeout import timeout
-from datetime import datetime
 from bs4 import BeautifulSoup
 import sys
 import socket
@@ -8,7 +7,6 @@ from fake_useragent import UserAgent
 import asyncio
 import concurrent.futures
 import random
-from json import loads
 from aiohttp_socks import SocksConnector, SocksVer
 
 from . import url
