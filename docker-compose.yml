@@ -20,6 +20,8 @@ services:
       - "8089:8089"
     volumes:
       - influxdb-storage:/var/lib/influxdb
+    expose:
+      - "8086"
     environment:
       - INFLUXDB_DB=${INFLUX_DB}
       - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
@@ -51,6 +53,8 @@ services:
       - ./grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - influxdb
+    expose:
+      - "3000"
     
     environment:
       - VIRTUAL_HOST=grafana.trollhunter.guru
