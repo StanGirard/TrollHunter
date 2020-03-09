@@ -2,10 +2,11 @@ import datetime
 from twitter_crawler.twint import twint
 from twitter_crawler.User import User
 from twitter_crawler.tweet_obj import Tweet_obj
+from twitter_crawler.celeryapp import app
 
 config = twint.Config()
 
-
+@app.task
 def get_info_from_user(username, args):
     user = User(username)
     config.Username = user.username
@@ -20,7 +21,7 @@ def get_info_from_user(username, args):
 
     return "user"
 
-
+@app.task
 def get_follower_user(user, config, args):
     get_twint_config(config, args)
     config.Username = user.username
@@ -29,10 +30,11 @@ def get_follower_user(user, config, args):
     config.User_full = False
     config.Store_object = True
     config.Limit = user.info_df.loc[0]["followers"]
-    twitter_crawler.twint.twint.run.Followers(config)
+    twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
 
 
+@app.task
 def get_following_user(user, config, args):
     get_twint_config(config, args)
     config.Username = user.username
@@ -40,10 +42,11 @@ def get_following_user(user, config, args):
     config.User_full = False
     config.Store_object = True
     config.Limit = user.info_df.loc[0]["following"]
-    twitter_crawler.twint.twint.run.Following(config)
+    twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
 
 
+@app.task
 def get_info_user(user, config):
     config.Username = user.username
     config.User_full = True
@@ -52,21 +55,23 @@ def get_info_user(user, config):
     config.Store_object = True
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
-    twitter_crawler.twint.twint.run.Search(config)
-    twitter_crawler.twint.twint.run.Lookup(config)
+    twint.run.Search(config)
+    twint.run.Lookup(config)
     user.set_info_to_df(twint.output.users_list[0])
 
 
+@app.task
 def get_list_tweets(user, config, args):
     get_twint_config(config, args)
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
-    twitter_crawler.twint.twint.run.Profile(config)
+    twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
     return twint.output.tweets_list
 
 
+@app.task
 def get_tweet_from_user(user,config,args,):
     # print("test")
     get_twint_config(config,args)
@@ -77,6 +82,7 @@ def get_tweet_from_user(user,config,args,):
     return format_tweet_to_html(tweets_result, user)
 
 
+@app.task
 def get_tweet_from_search(args):
     config.Username = None
     config.Store_object = True
@@ -84,7 +90,7 @@ def get_tweet_from_search(args):
         return " bad request"
     config.Search = args["search"]
     twint.output.tweets_list.clear()
-    twitter_crawler.twint.twint.run.Search(config)
+    twint.run.Search(config)
     tweet_result = twint.output.tweets_list
 
     tweets_result_df = twint.output.panda.Tweets_df
@@ -92,6 +98,7 @@ def get_tweet_from_search(args):
     return format_tweet_to_html(tweet_result, "test")
 
 
+@app.task
 def get_origin_tweet(args):
     if "search" not in args:
         return " bad request"
@@ -102,7 +109,7 @@ def get_origin_tweet(args):
     config.Search = tweet
 
     twint.output.tweets_list.clear()
-    twitter_crawler.twint.twint.run.Search(config)
+    twint.run.Search(config)
 
     tweets = twint.output.tweets_list
 
