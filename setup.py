@@ -3,8 +3,11 @@ from setuptools import setup
 
 setup(
     name='TrollHunter',
-    version='0.1',
+
+    version='0.2',
     description='TrollHunter',
+    url="https://github.com/StanGirard/TrollHunter",
+    license="GPL",
     classifiers=[
         'Programming Language :: Python :: 3',
         'Development Status :: 5 - Production/Stable',
@@ -13,12 +16,6 @@ setup(
     packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
               "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage",
               "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database"],
-    # entry_points={
-    #     'console_scripts': [
-    #         'worker = celery -A request worker --loglevel=info --app=TrollHunter.twitter_crawler.celeryapp',
-    #     ],
-    # },
-    # Required
     install_requires=[
         "aiodns==2.0.0",
         "aiofiles==0.4.0",
@@ -81,4 +78,6 @@ setup(
         "yarl==1.4.2",
         "zipp==3.1.0"
     ]
+
 )
+
