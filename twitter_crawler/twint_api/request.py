@@ -39,7 +39,7 @@ def get_follower_user(user, args):
     config.Pandas_au = True
     config.User_full = False
     config.Store_object = True
-    config.Limit = 5  # user.info_df.loc[0]["followers"]
+    config.Limit = user.info_df.loc[0]["followers"]
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
     for username in user.follower_df.iloc[0]['followers']:
@@ -56,7 +56,7 @@ def get_following_user(user, args):
     config.Pandas_au = True
     config.User_full = False
     config.Store_object = True
-    config.Limit = 5  # user.info_df.loc[0]["following"]
+    config.Limit = user.info_df.loc[0]["following"]
     twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
     for username in user.following_df.iloc[0]['following']:
