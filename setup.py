@@ -76,7 +76,8 @@ setup(
         "Werkzeug==1.0.0",
         "wsproto==0.15.0",
         "yarl==1.4.2",
-        "zipp==3.1.0"
+        "zipp==3.1.0",
+        "rake-nltk==1.0.4"
     ]
 
 )
