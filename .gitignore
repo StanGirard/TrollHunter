@@ -10,3 +10,6 @@ __pycache__/
 news-crawler/__pycache__/
 /venv
 postgres-data/
+build/
+TrollHunter.egg-info/
+dist/
