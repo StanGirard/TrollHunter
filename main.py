@@ -1,4 +1,4 @@
-from TrollHunter.news_crawler.sitemap.data_elastic import elastic_sitemap
+from TrollHunter.Gorafi.sitemap.data_elastic import elastic_sitemap
 
 
 
