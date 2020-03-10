@@ -1,14 +1,15 @@
-import numpy as np
 import pandas as pd
 import time
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
-from news_crawler.sitemap.sitemap import parse_sitemap, check_id_in_es
-from news_crawler.database.postgres_database import get_all_sitemap
-import requests
+
 
 #Check for empty values
+from TrollHunter.news_crawler.database.postgres_database import get_all_sitemap
+from TrollHunter.news_crawler.sitemap.sitemap import parse_sitemap
+
+
 def safe_value(field_val):
     return field_val if not pd.isna(field_val) else "Other"
 
