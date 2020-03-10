@@ -1,5 +1,5 @@
-from TrollHunter.news_crawler.database.postgres_database import get_sitemap_parent, get_all_sitemap
-from TrollHunter.news_crawler.sitemap.data_elastic import elastic_sitemap
+from TrollHunter.news_crawler.database import get_sitemap_parent, get_all_sitemap
+from TrollHunter.news_crawler.sitemap import elastic_sitemap
 import time
 
 

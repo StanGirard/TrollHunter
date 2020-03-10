@@ -6,7 +6,7 @@ from elasticsearch import helpers
 
 
 #Check for empty values
-from TrollHunter.news_crawler.database.postgres_database import get_all_sitemap
+from TrollHunter.news_crawler.database import get_all_sitemap
 from TrollHunter.news_crawler.sitemap.sitemap import parse_sitemap
 
 
