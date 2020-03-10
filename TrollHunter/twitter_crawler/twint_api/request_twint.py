@@ -1,10 +1,10 @@
 import datetime
 import pandas as pd
-from TrollHunter.twitter_crawler.twint import twint
 from TrollHunter.twitter_crawler.User import User
 from TrollHunter.twitter_crawler.tweet_obj import Tweet_obj
 from TrollHunter.twitter_crawler.celeryapp import app
 from TrollHunter.twitter_crawler.elastic import Elastic
+from TrollHunter.twitter_crawler.twint import twint
 
 config = twint.Config()
 config.Hide_output = True
