@@ -6,8 +6,8 @@ from elasticsearch import helpers
 
 
 #Check for empty values
-from TrollHunter.Gorafi.database.postgres_database import get_all_sitemap
-from TrollHunter.Gorafi.sitemap.sitemap import parse_sitemap
+from TrollHunter.news_crawler.database.postgres_database import get_all_sitemap
+from TrollHunter.news_crawler.sitemap.sitemap import parse_sitemap
 
 
 def safe_value(field_val):

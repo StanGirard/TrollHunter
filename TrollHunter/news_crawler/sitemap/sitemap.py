@@ -7,7 +7,7 @@ from elasticsearch import Elasticsearch
 
 # to check if an id (here the url) already exists in the ES
 from TrollHunter.loggers.InfluxLog import InfluxDBLog
-from TrollHunter.Gorafi.database.postgres_database import update_sitemap, insert_sitemap
+from TrollHunter.news_crawler.database.postgres_database import update_sitemap, insert_sitemap
 
 
 def check_id_in_es(es: Elasticsearch, index: str, id: str):
