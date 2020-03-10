@@ -97,6 +97,8 @@ def get_tweet_from_user(user, args):
     # print("test")
     get_twint_config(args)
     config.Search = None
+    config.User_full = False
+
     config.Pandas = True
     tweets_result = get_list_tweets(args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
