@@ -15,7 +15,7 @@ setup(
 
     packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
               "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage",
-              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database"],
+              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto.Keywork"],
     install_requires=[
         "aiodns==2.0.0",
         "aiofiles==0.4.0",
@@ -48,6 +48,7 @@ setup(
         "hpack==3.0.0",
         "hyperframe==5.2.0",
         "idna==2.9",
+        "influxdb==5.2.3",
         "importlib-metadata==1.5.0",
         "itsdangerous==1.1.0",
         "Jinja2==2.11.1",
@@ -76,7 +77,8 @@ setup(
         "Werkzeug==1.0.0",
         "wsproto==0.15.0",
         "yarl==1.4.2",
-        "zipp==3.1.0"
+        "zipp==3.1.0",
+        "rake-nltk==1.0.4"
     ]
 
 )
