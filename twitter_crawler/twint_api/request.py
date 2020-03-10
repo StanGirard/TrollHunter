@@ -26,7 +26,8 @@ def get_info_from_user(username, args):
 
     get_follower_user(user, args)
     get_following_user(user, args)
-    elastic.store_users(user.follow_df)
+    elastic.store_users(user.info_follow_df)
+    elastic.store_interaction(user.interaction_df)
 
     return "user"
 
@@ -35,18 +36,17 @@ def get_info_from_user(username, args):
 def get_follower_user(user, args):
     get_twint_config(args)
     config.Username = user.username
-    config.Followers = True
     config.Pandas_au = True
     config.User_full = False
     config.Store_object = True
-    config.Limit = user.info_df.loc[0]["followers"]
+    config.Limit = 5  # user.info_df.loc[0]["followers"]
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
     for username in user.follower_df.iloc[0]['followers']:
         follower = User(username)
         get_info_user(follower)
-        user.set_follow_df(follower.info_df)
-        print("Processed ", len(user.follow_df), "/", user.info_df.loc[0]["following"] + user.info_df.loc[0]["following"], " followers")
+        user.set_follow_df(follower.info_df, follower.info_df.loc[0]['id'], user.info_df.loc[0]['id'])
+        print("Processed ", len(user.interaction_df), "/", user.info_df.loc[0]["followers"] + user.info_df.loc[0]["following"], " followers")
 
 
 @app.task
@@ -54,17 +54,16 @@ def get_following_user(user, args):
     get_twint_config(args)
     config.Username = user.username
     config.Pandas_au = True
-    config.Pandas = False
     config.User_full = False
     config.Store_object = True
-    config.Limit = user.info_df.loc[0]["following"]
+    config.Limit = 5  # user.info_df.loc[0]["following"]
     twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
     for username in user.following_df.iloc[0]['following']:
         following = User(username)
         get_info_user(following)
-        user.set_follow_df(following.info_df)
-        print("Processed ", len(user.follow_df), "/", user.info_df.loc[0]["following"] + user.info_df.loc[0]["following"], " following")
+        user.set_follow_df(following.info_df, user.info_df.loc[0]['id'], following.info_df.loc[0]['id'])
+        print("Processed ", len(user.interaction_df), "/", user.info_df.loc[0]["followers"] + user.info_df.loc[0]["following"], " following")
 
 @app.task
 def get_info_user(user):

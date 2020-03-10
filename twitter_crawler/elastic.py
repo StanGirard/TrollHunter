@@ -17,6 +17,10 @@ class Elastic:
         print("Store ", len(tweets.index), " tweet(s)")
         print(helpers.bulk(self.es, self.doc_from_df(tweets, tweets.columns, "twitter_tweet", "id")))
 
+    def store_interaction(self, interactions):
+        print("Store ", len(interactions.index), " interaction(s)")
+        print(helpers.bulk(self.es, self.doc_from_df(interactions, interactions.columns, "twitter_interaction", "id")))
+
     @staticmethod
     def filter_keys(document, headers):
         return {key: document[key] for key in headers}
