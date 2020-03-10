@@ -5,7 +5,7 @@ services:
     image: nginx:latest
     container_name: production_nginx
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
       - 443:443
@@ -49,8 +49,8 @@ services:
       - '3000:3000'
     volumes:
       - grafana-storage:/var/lib/grafana
-      - ./grafana-provisioning/:/etc/grafana/provisioning
-      - ./grafana.ini:/etc/grafana/grafana.ini
+      - ./docker/grafana-provisioning/:/etc/grafana/provisioning
+      - ./docker/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - influxdb
     expose:
@@ -83,12 +83,12 @@ services:
       - elk
   elasticsearch:
     build:
-      context: docker-elk/elasticsearch/
+      context: docker/elk/elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - type: bind
-        source: ./docker-elk/elasticsearch/config/elasticsearch.yml
+        source: ./docker/elk/elasticsearch/config/elasticsearch.yml
         target: /usr/share/elasticsearch/config/elasticsearch.yml
         read_only: true
       - type: volume
@@ -108,16 +108,16 @@ services:
 
   logstash:
     build:
-      context: docker-elk/logstash/
+      context: docker/elk/logstash/
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - type: bind
-        source: ./docker-elk/logstash/config/logstash.yml
+        source: ./docker/elk/logstash/config/logstash.yml
         target: /usr/share/logstash/config/logstash.yml
         read_only: true
       - type: bind
-        source: ./docker-elk/logstash/pipeline
+        source: ./docker/elk/logstash/pipeline
         target: /usr/share/logstash/pipeline
         read_only: true
     ports:
@@ -133,12 +133,12 @@ services:
 
   kibana:
     build:
-      context: docker-elk/kibana/
+      context: docker/elk/kibana/
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - type: bind
-        source: ./docker-elk/kibana/config/kibana.yml
+        source: ./docker/elk/kibana/config/kibana.yml
         target: /usr/share/kibana/config/kibana.yml
         read_only: true
     ports:
