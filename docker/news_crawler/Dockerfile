@@ -1,5 +1,7 @@
 FROM python:3.7
 WORKDIR /news_crawler
-RUN pip install TrollHunter
 COPY . .
+RUN pip install TrollHunter
+RUN pip install -r requirements.txt
+
 CMD ["python", "./main.py"]
