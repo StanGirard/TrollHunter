@@ -9,8 +9,14 @@ setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Idependent',
     ],
-    packages=["twitter_crawler","twitter_crawler.twint_api",
-              "twitter_crawler.twint.twint"],# Required
+    packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
+              "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage"],
+    # entry_points={
+    #     'console_scripts': [
+    #         'worker = celery -A request worker --loglevel=info --app=TrollHunter.twitter_crawler.celeryapp',
+    #     ],
+    # },
+    # Required
     install_requires=[
         "aiodns==2.0.0",
         "aiofiles==0.4.0",
