@@ -160,6 +160,12 @@ services:
     networks:
       - elk
 
+  news_crawler:
+    build:
+      context: docker/news_crawler/
+    networks:
+      - elk
+
 networks:
   elk:
     driver: bridge

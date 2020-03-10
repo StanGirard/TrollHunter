@@ -8,3 +8,4 @@ elastic_sitemap("https://www.lemonde.fr/sitemap_news.xml",["loc", "lastmod", "ne
 
 
 
+
