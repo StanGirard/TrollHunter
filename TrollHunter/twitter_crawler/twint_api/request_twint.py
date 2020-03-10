@@ -1,8 +1,8 @@
 import datetime
-from twitter_crawler.twint import twint
-from twitter_crawler.User import User
-from twitter_crawler.tweet_obj import Tweet_obj
-from twitter_crawler.celeryapp import app
+from TrollHunter.twitter_crawler.twint import twint
+from TrollHunter.twitter_crawler.User import User
+from TrollHunter.twitter_crawler.tweet_obj import Tweet_obj
+from TrollHunter.twitter_crawler.celeryapp import app
 
 config = twint.Config()
 
@@ -11,13 +11,13 @@ def get_info_from_user(username, args):
     user = User(username)
     config.Username = user.username
 
-    get_twint_config(config,args)
+    get_twint_config(args)
 
-    get_info_user(user,config)
-    get_follower_user(user,config,args)
-    get_following_user(user,config,args)
+    get_info_user(user)
+    get_follower_user(user,args)
+    get_following_user(user,args)
 
-    get_tweet_from_user(user,config,args)
+    get_tweet_from_user(user,args)
 
     return "user"
 
@@ -102,7 +102,7 @@ def get_tweet_from_search(args):
 def get_origin_tweet(args):
     if "search" not in args:
         return " bad request"
-    get_twint_config(config,args)
+    get_twint_config(args)
     tweet = args["search"]
     config.Username = None
     config.Store_object = True
