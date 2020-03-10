@@ -106,7 +106,7 @@ def createIndex(config, instance, **scope):
                     },
                     "settings": {
                         "number_of_shards": 1,
-                        "texto": {
+                        "analysis": {
                             "normalizer": {
                                 "hashtag_normalizer": {
                                     "type": "custom",
