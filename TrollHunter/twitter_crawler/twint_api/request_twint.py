@@ -12,14 +12,18 @@ elastic = Elastic()
 
 """
 args:
-    tweet:      set to 0 to avoid tweet (default: 1)
-    follow:     set to 0 to avoid follow (default: 1)
-    limit:      set the number of tweet to retrieve (default: 100)
-    since:      date selector for tweets (format ???)
-    until:      date selector for tweets (format ???)
-    retweet:    set to 1 to retrieve retweet
-    search:     ?
+    tweet:          set to 0 to avoid tweet (default: 1)
+    follow:         set to 0 to avoid follow (default: 1)
+    limit:          set the number of tweet to retrieve (Increments of 20, default: 100)
+    follow_limit    set the number of following and followers to retrieve 
+    since:          date selector for tweets (Example: 2017-12-27)
+    until:          date selector for tweets (Example: 2017-12-27)
+    retweet:        set to 1 to retrieve retweet (default: 0)
+    search:         search terms
+    
+TODO: Retrieve tweet twitted to the user ?
 """
+
 @app.task
 def get_info_from_user(username, args):
     reset_data()
@@ -51,14 +55,19 @@ def get_follower_user(user, args):
     config.Pandas_au = True
     config.User_full = False
     config.Store_object = True
-    config.Limit = user.info_df.loc[0]["followers"]
+    if "follow_limit" in args:
+        config.Limit = int(args["follow_limit"])
+    else:
+        config.Limit = user.info_df.loc[0]["followers"]
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
+    i = 1
     for username in user.follower_df.iloc[0]['followers']:
         follower = User(username)
         get_info_user(follower)
         user.set_follow_df(follower.info_df, follower.info_df.loc[0]['id'], user.info_df.loc[0]['id'])
-        print("Processed ", len(user.interaction_df), "/", user.info_df.loc[0]["followers"] + user.info_df.loc[0]["following"], " followers")
+        print("Processed ", i, "/", config.Limit, " followers")
+        i += 1
 
 
 @app.task
@@ -68,14 +77,19 @@ def get_following_user(user, args):
     config.Pandas_au = True
     config.User_full = False
     config.Store_object = True
-    config.Limit = user.info_df.loc[0]["following"]
+    if "follow_limit" in args:
+        config.Limit = int(args["follow_limit"])
+    else:
+        config.Limit = user.info_df.loc[0]["following"]
     twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
+    i = 1
     for username in user.following_df.iloc[0]['following']:
         following = User(username)
         get_info_user(following)
         user.set_follow_df(following.info_df, user.info_df.loc[0]['id'], following.info_df.loc[0]['id'])
-        print("Processed ", len(user.interaction_df), "/", user.info_df.loc[0]["followers"] + user.info_df.loc[0]["following"], " following")
+        print("Processed ", i, "/", config.Limit, " following")
+        i += 1
 
 @app.task
 def get_info_user(user):
@@ -113,7 +127,6 @@ def get_tweet_from_user(user, args):
     config.Pandas = True
     tweets_result = get_list_tweets(args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
-    elastic.store_tweets(twint.output.panda.Tweets_df)
     # return format_tweet_to_html(tweets_result, user.username)
 
 
