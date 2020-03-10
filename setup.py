@@ -9,8 +9,10 @@ setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Idependent',
     ],
+
     packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
-              "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage"],
+              "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage",
+              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database"],
     # entry_points={
     #     'console_scripts': [
     #         'worker = celery -A request worker --loglevel=info --app=TrollHunter.twitter_crawler.celeryapp',
