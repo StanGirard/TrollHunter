@@ -1,5 +1,4 @@
 from rake_nltk import Rake
-import nltk
 
 test = False
 
