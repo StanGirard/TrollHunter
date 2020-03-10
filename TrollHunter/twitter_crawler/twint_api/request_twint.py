@@ -10,7 +10,16 @@ config = twint.Config()
 config.Hide_output = True
 elastic = Elastic()
 
-
+"""
+args:
+    tweet:      set to 0 to avoid tweet (default: 1)
+    follow:     set to 0 to avoid follow (default: 1)
+    limit:      set the number of tweet to retrieve (default: 100)
+    since:      date selector for tweets (format ???)
+    until:      date selector for tweets (format ???)
+    retweet:    set to 1 to retrieve retweet
+    search:     ?
+"""
 @app.task
 def get_info_from_user(username, args):
     reset_data()
@@ -22,12 +31,15 @@ def get_info_from_user(username, args):
     get_info_user(user)
     elastic.store_users(user.info_df)
 
-    get_tweet_from_user(user, args)
+    if "tweet" not in args or int(args["tweet"]) == 1:
+        get_tweet_from_user(user, args)
+        elastic.store_tweets(user.tweets_df)
 
-    get_follower_user(user, args)
-    get_following_user(user, args)
-    elastic.store_users(user.info_follow_df)
-    elastic.store_interaction(user.interaction_df)
+    if "follow" not in args or int(args["follow"]) == 1:
+        get_follower_user(user, args)
+        get_following_user(user, args)
+        elastic.store_users(user.info_follow_df)
+        elastic.store_interaction(user.interaction_df)
 
     return "user"
 
