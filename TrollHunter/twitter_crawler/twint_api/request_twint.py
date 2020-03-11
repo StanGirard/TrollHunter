@@ -43,7 +43,6 @@ def get_info_from_user(username, args):
     return "user"
 
 
-@app.task
 def get_follower_user(user, args):
     config = get_twint_config(args, user=user)
     config.Pandas_au = True
@@ -64,7 +63,6 @@ def get_follower_user(user, args):
         i += 1
 
 
-@app.task
 def get_following_user(user, args):
     config = get_twint_config(args, user=user)
     config.Pandas_au = True
@@ -84,7 +82,6 @@ def get_following_user(user, args):
         print("Processed ", i, "/", limit, " following")
         i += 1
 
-@app.task
 def get_info_user(user, args):
     config = get_twint_config(args, user=user)
     config.User_full = True
@@ -98,7 +95,6 @@ def get_info_user(user, args):
     user.set_info_to_df(twint.output.users_list[-1])
 
 
-@app.task
 def get_list_tweets(user, args):
     config = get_twint_config(args, user=user)
     config.Profile = True
@@ -109,7 +105,6 @@ def get_list_tweets(user, args):
     return twint.output.tweets_list
 
 
-@app.task
 def get_tweet_from_user(user, args):
     tweets_result = get_list_tweets(user, args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
