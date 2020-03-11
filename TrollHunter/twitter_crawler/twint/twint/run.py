@@ -45,6 +45,7 @@ class Twint:
         logme.debug(__name__+':Twint:Feed')
         consecutive_errors_count = 0
         while True:
+
             response = await get.RequestUrl(self.config, self.init, headers=[("User-Agent", self.user_agent)])
             if self.config.Debug:
                 print(response, file=open("twint-last-request.log", "w", encoding="utf-8"))
@@ -148,7 +149,7 @@ class Twint:
         await task
 
     async def run(self):
-        if self.config.TwitterSearch:
+        if self.config.TwitterSearch or (self.config.Profile and self.config.Profile_full) or self.config.Favorite:
             self.user_agent = await get.RandomUserAgent(wa=True)
         else:
             self.user_agent = await get.RandomUserAgent()
