@@ -51,6 +51,10 @@ def get_subjectivity(tweet):
 
 if __name__ == '__main__':
     tweets = ["I'm so happy", "I surprised him", "It's a sad news", "I'm happy and sad at the same time"]
-    result = get_subjectivity(tweets)
+    sentiment = get_sentiment_from_tweets(tweets)
+    polarity = get_polarity(tweets)
+    sub = get_subjectivity(tweets)
 
-    print(result)
+    print("SENTIMENT\n", sentiment, "\n")
+    print("POLARITY\n", polarity, "\n")
+    print("SUBJECTIVITY\n", sub, "\n")
