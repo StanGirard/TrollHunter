@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../")
-from sitemap import parse_sitemap
+from TrollHunter.news_crawler.sitemap import parse_sitemap
 import time
 import pandas as pd
 
