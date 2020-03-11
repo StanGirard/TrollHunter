@@ -6,14 +6,46 @@ from nltk import word_tokenize
 import string
 from nltk.stem import WordNetLemmatizer
 
-test = False
+test = True
+
+# download/update POS tag list and tag each token
+nltk.download('averaged_perceptron_tagger')
+# download/update lemmatizer english set
+nltk.download('wordnet')
 
 
 def extract(text_for_extract: str) -> set:
     return extract_v2(text_for_extract).union(extract_v1(text_for_extract))
 
 
-def extract_v1(txt: str) -> set:
+# function to pre-process the text
+def clean(text):
+    text = text.lower()
+    printable = set(string.printable)
+    text = filter(lambda x: x in printable, text)
+    text = "".join(list(text))
+    return text
+
+
+def lemetize(POS_tag):
+    wordnet_lemmatizer = WordNetLemmatizer()
+
+    adjective_tags = ['JJ', 'JJR', 'JJS']
+    lemmatized_text = []
+
+    for word in POS_tag:
+        if word[1] in adjective_tags:
+            lemmatized_text.append(str(wordnet_lemmatizer.lemmatize(word[0], pos="a")))
+        else:
+            lemmatized_text.append(str(wordnet_lemmatizer.lemmatize(word[0])))  # default POS = noun
+
+    # print("Text tokens after lemmatization of adjectives and nouns: \n")
+    # print(lemmatized_text)
+
+    return lemmatized_text
+
+
+def extract_v1(txt: str, lim: int = 25) -> set:
     # Uses stopwords for english from NLTK, and all puntuation characters by
     # default
     r = Rake()
@@ -29,24 +61,22 @@ def extract_v1(txt: str) -> set:
 
     # To get keyword phrases ranked highest to lowest with scores.
     # print(r.get_ranked_phrases_with_scores())
-    res = r.get_ranked_phrases()
+    ranked_phrases = r.get_ranked_phrases()
+    res = []
 
-    return set(res[:(10 if len(res) >= 10 else len(res))])
+    for phrase in ranked_phrases:
+        text = word_tokenize(phrase)
+        POS_tag = nltk.pos_tag(text)
+
+        res.append(" ".join(lemetize(POS_tag), ))
+
+    return set(res[:(lim if len(res) >= lim else len(res))])
 
 
-def extract_v2(txt: str) -> set:
+def extract_v2(txt: str, lim: int = 50) -> set:
     # algorithm from https://github.com/JRC1995/TextRank-Keyword-Extraction/blob/master/TextRank.ipynb
 
     # nltk.download('punkt')
-
-    # function to pre-process the text
-    def clean(text):
-        text = text.lower()
-        printable = set(string.printable)
-        text = filter(lambda x: x in printable, text)
-        text = "".join(list(text))
-        return text
-
     Cleaned_text = clean(txt)
     # print(Cleaned_text)
     text = word_tokenize(Cleaned_text)
@@ -54,28 +84,14 @@ def extract_v2(txt: str) -> set:
     #print("Tokenized Text: \n")
     #print(text)
 
-    # download/update POS tag list and tag each token
-    nltk.download('averaged_perceptron_tagger')
+    # tag each token
     POS_tag = nltk.pos_tag(text)
 
     #print("Tokenized Text with POS tags: \n")
     #print(POS_tag)
 
-    # download/update lemmatizer english set
-    nltk.download('wordnet')
-    wordnet_lemmatizer = WordNetLemmatizer()
 
-    adjective_tags = ['JJ', 'JJR', 'JJS']
-    lemmatized_text = []
-
-    for word in POS_tag:
-        if word[1] in adjective_tags:
-            lemmatized_text.append(str(wordnet_lemmatizer.lemmatize(word[0], pos="a")))
-        else:
-            lemmatized_text.append(str(wordnet_lemmatizer.lemmatize(word[0])))  # default POS = noun
-
-    #print("Text tokens after lemmatization of adjectives and nouns: \n")
-    #print(lemmatized_text)
+    lemmatized_text = lemetize(POS_tag)
 
     # tag each token
     POS_tag = nltk.pos_tag(lemmatized_text)
@@ -85,7 +101,7 @@ def extract_v2(txt: str) -> set:
 
     stopwords = []
 
-    wanted_POS = ['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']
+    wanted_POS = ['CD', 'NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']
 
     for word in POS_tag:
         if word[1] not in wanted_POS:
@@ -231,7 +247,7 @@ def extract_v2(txt: str) -> set:
 
     sorted_index = np.flip(np.argsort(phrase_scores), 0)
 
-    keywords_num = 10 if len(keywords) >= 10 else len(keywords)
+    keywords_num = lim if len(keywords) >= lim else len(keywords)
 
     # print("Keywords:\n")
 
@@ -246,4 +262,6 @@ if test:
     file = open("text_example.txt", "r")
     text = file.read()
     print(extract(text))
+    print(extract_v1(text))
+    print(extract_v2(text))
     file.close()
