@@ -95,20 +95,14 @@ def get_info_user(user, args):
     user.set_info_to_df(twint.output.users_list[-1])
 
 
-def get_list_tweets(user, args):
+def get_tweet_from_user(user, args):
     config = get_twint_config(args, user=user)
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
     twint.run.Profile(config)
-    # twint.output.panda.Tweets_df.to_json("./test.json")
-    return twint.output.tweets_list
-
-
-def get_tweet_from_user(user, args):
-    tweets_result = get_list_tweets(user, args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
-    # return format_tweet_to_html(tweets_result, user.username)
+    return twint.output.tweets_list
 
 
 @app.task
