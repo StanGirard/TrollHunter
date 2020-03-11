@@ -22,7 +22,6 @@ args:
     
 TODO: Retrieve tweet twitted to the user ?
 """
-
 @app.task
 def get_info_from_user(username, args):
     reset_data()
@@ -46,11 +45,9 @@ def get_info_from_user(username, args):
 
 @app.task
 def get_follower_user(user, args):
-    config = get_twint_config(args)
-    config.Username = user.username
+    config = get_twint_config(args, user=user)
     config.Pandas_au = True
     config.User_full = False
-    config.Store_object = True
     if "follow_limit" in args:
         config.Limit = int(args["follow_limit"])
     else:
@@ -69,11 +66,9 @@ def get_follower_user(user, args):
 
 @app.task
 def get_following_user(user, args):
-    config = get_twint_config(args)
-    config.Username = user.username
+    config = get_twint_config(args, user=user)
     config.Pandas_au = True
     config.User_full = False
-    config.Store_object = True
     if "follow_limit" in args:
         config.Limit = int(args["follow_limit"])
     else:
@@ -91,12 +86,10 @@ def get_following_user(user, args):
 
 @app.task
 def get_info_user(user, args):
-    config = get_twint_config(args)
-    config.Username = user.username
+    config = get_twint_config(args, user=user)
     config.User_full = True
     config.Profile_full = True
     config.Pandas = False
-    config.Store_object = True
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
     twint.run.Search(config)
@@ -107,12 +100,9 @@ def get_info_user(user, args):
 
 @app.task
 def get_list_tweets(user, args):
-    config = get_twint_config(args)
-    config.Username = user.username
-    config.User_id = user.user_id
+    config = get_twint_config(args, user=user)
     config.Profile = True
     config.Profile_full = True
-    config.Pandas = True
     twint.output.tweets_list.clear()
     twint.run.Profile(config)
     # twint.output.panda.Tweets_df.to_json("./test.json")
@@ -147,11 +137,9 @@ def get_tweet_from_search(args):
 def get_origin_tweet(args):
     if "search" not in args:
         return " bad request"
-    config = get_twint_config(args)
     tweet = args["search"]
-    config.Username = None
-    config.Store_object = True
-    config.Search = tweet
+
+    config = get_twint_config(args)
 
     twint.output.tweets_list.clear()
     twint.run.Search(config)
@@ -175,28 +163,27 @@ def get_origin_tweet(args):
     return format_tweet_to_html(res, "ORIGIN")
 
 
-def get_twint_config(args):
+def get_twint_config(args, user=None):
     config = twint.Config()
     config.Hide_output = HIDE_TWEET_OUPUT
-    limit = 100
-    since = None
-    retweet = False
-    until = None
-    if "limit" in args:
-        limit = int(args["limit"])
-    if "since" in args:
-        since = args["since"]
-    if "until" in args:
-        until = args["until"]
-    if "retweet" in args:
-        retweet = args["retweet"].lower() == "true"
+    if user is not None:
+        config.Username = user.username
+        config.User_id = user.user_id
 
+    if "limit" in args:
+        config.Limit = int(args["limit"])
+    else:
+        config.Limit = 100
+
+    if "since" in args:
+        config.Since = args["since"]
+    if "until" in args:
+        config.Until = args["until"]
+    if "retweet" in args:
+        config.Retweets = args["retweet"].lower() == "true"
     if "search" in args:
         config.Search = args["search"]
-    config.Limit = limit
-    config.Retweets = retweet
-    config.Since = since
-    config.Until = until
+
     config.Pandas = True
     config.Store_object = True
     return config
