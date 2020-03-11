@@ -33,8 +33,24 @@ def get_polarity(tweet):
     return df_result
 
 
+def get_subjectivity(tweet):
+    tab_result = {'tweet': [],
+                  'subjectivity': []}
+
+    for t in tweet:
+        obj = TextBlob(t)
+        subjectivity = obj.sentiment.subjectivity
+
+        tab_result['tweet'].append(t)
+        tab_result['subjectivity'].append(subjectivity)
+
+    df_result = pd.DataFrame(tab_result, columns=['tweet', 'subjectivity'])
+
+    return df_result
+
+
 if __name__ == '__main__':
     tweets = ["I'm so happy", "I surprised him", "It's a sad news", "I'm happy and sad at the same time"]
-    result = get_polarity(tweets)
+    result = get_subjectivity(tweets)
 
     print(result)
