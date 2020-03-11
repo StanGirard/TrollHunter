@@ -4,7 +4,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
 # Check for empty values
-from TrollHunter.news_crawler.database.postgres_database import get_all_sitemap
+
 from TrollHunter.news_crawler.sitemap.sitemap import parse_sitemap
 
 
@@ -13,7 +13,7 @@ def safe_value(field_val):
 
 
 def filterKeys(document, headers):
-    use_these_keys = ["Source"] + headers
+    use_these_keys = ["Source"] + headers + ['Trust level']
     return {key: document[key] for key in use_these_keys }
 
 

@@ -20,7 +20,3 @@ def scheduler_news():
         sleep = time.time() - start
         if sleep < 7200:
             time.sleep(7200 - sleep)
-
-
-if __name__ == "__main__":
-    scheduler_news()

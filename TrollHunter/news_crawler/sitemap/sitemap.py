@@ -61,7 +61,7 @@ def parse_sitemap(sitemap, trust_levels, db_sitemaps, es: Elasticsearch, indexEs
     if sort and urls:
         urls.sort(key=sort_loc)
     sitemaps = soup.findAll('sitemap')
-    new_list = ["Source"] + sitemap[2]
+    new_list = ["Source"] + sitemap[2] + ["Trust level"]
     panda_out_total = pd.DataFrame([], columns=new_list)
 
     if not urls and not sitemaps:
