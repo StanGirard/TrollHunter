@@ -6,8 +6,7 @@ from TrollHunter.twitter_crawler.celeryapp import app
 from TrollHunter.twitter_crawler.elastic import Elastic
 from TrollHunter.twitter_crawler.twint import twint
 
-config = twint.Config()
-config.Hide_output = True
+HIDE_TWEET_OUPUT = True
 elastic = Elastic()
 
 """
@@ -28,11 +27,8 @@ TODO: Retrieve tweet twitted to the user ?
 def get_info_from_user(username, args):
     reset_data()
     user = User(username)
-    config.Username = user.username
 
-    get_twint_config(args)
-
-    get_info_user(user)
+    get_info_user(user, args)
     elastic.store_users(user.info_df)
 
     if "tweet" not in args or int(args["tweet"]) == 1:
@@ -50,7 +46,7 @@ def get_info_from_user(username, args):
 
 @app.task
 def get_follower_user(user, args):
-    get_twint_config(args)
+    config = get_twint_config(args)
     config.Username = user.username
     config.Pandas_au = True
     config.User_full = False
@@ -62,17 +58,18 @@ def get_follower_user(user, args):
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
     i = 1
+    limit = config.Limit
     for username in user.follower_df.iloc[0]['followers']:
         follower = User(username)
-        get_info_user(follower)
+        get_info_user(follower, args)
         user.set_follow_df(follower.info_df, follower.info_df.loc[0]['id'], user.info_df.loc[0]['id'])
-        print("Processed ", i, "/", config.Limit, " followers")
+        print("Processed ", i, "/", limit, " followers")
         i += 1
 
 
 @app.task
 def get_following_user(user, args):
-    get_twint_config(args)
+    config = get_twint_config(args)
     config.Username = user.username
     config.Pandas_au = True
     config.User_full = False
@@ -84,15 +81,17 @@ def get_following_user(user, args):
     twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
     i = 1
+    limit = config.Limit
     for username in user.following_df.iloc[0]['following']:
         following = User(username)
-        get_info_user(following)
+        get_info_user(following, args)
         user.set_follow_df(following.info_df, user.info_df.loc[0]['id'], following.info_df.loc[0]['id'])
-        print("Processed ", i, "/", config.Limit, " following")
+        print("Processed ", i, "/", limit, " following")
         i += 1
 
 @app.task
-def get_info_user(user):
+def get_info_user(user, args):
+    config = get_twint_config(args)
     config.Username = user.username
     config.User_full = True
     config.Profile_full = True
@@ -102,12 +101,15 @@ def get_info_user(user):
     # Need Lookup because bug with twint and flask
     twint.run.Search(config)
     twint.run.Lookup(config)
+    user.set_user_id(config.User_id)
     user.set_info_to_df(twint.output.users_list[-1])
 
 
 @app.task
-def get_list_tweets(args):
-    get_twint_config(args)
+def get_list_tweets(user, args):
+    config = get_twint_config(args)
+    config.Username = user.username
+    config.User_id = user.user_id
     config.Profile = True
     config.Profile_full = True
     config.Pandas = True
@@ -119,19 +121,14 @@ def get_list_tweets(args):
 
 @app.task
 def get_tweet_from_user(user, args):
-    # print("test")
-    get_twint_config(args)
-    config.Search = None
-    config.User_full = False
-
-    config.Pandas = True
-    tweets_result = get_list_tweets(args)
+    tweets_result = get_list_tweets(user, args)
     user.set_tweet_df(twint.output.panda.Tweets_df)
     # return format_tweet_to_html(tweets_result, user.username)
 
 
 @app.task
 def get_tweet_from_search(args):
+    config = twint.Config()
     config.Username = None
     config.Store_object = True
     if not "search" in args:
@@ -150,7 +147,7 @@ def get_tweet_from_search(args):
 def get_origin_tweet(args):
     if "search" not in args:
         return " bad request"
-    get_twint_config(args)
+    config = get_twint_config(args)
     tweet = args["search"]
     config.Username = None
     config.Store_object = True
@@ -179,6 +176,8 @@ def get_origin_tweet(args):
 
 
 def get_twint_config(args):
+    config = twint.Config()
+    config.Hide_output = HIDE_TWEET_OUPUT
     limit = 100
     since = None
     retweet = False
@@ -200,6 +199,7 @@ def get_twint_config(args):
     config.Until = until
     config.Pandas = True
     config.Store_object = True
+    return config
 
 
 def format_tweet_to_html(tweets_list, word):
