@@ -6,10 +6,11 @@ from nltk import word_tokenize
 import string
 from nltk.stem import WordNetLemmatizer
 
-test = True
+test = False
 
-def extract(text: str):
-    return extract_v2(text).union(extract_v1(text))
+
+def extract(text_for_extract: str) -> set:
+    return extract_v2(text_for_extract).union(extract_v1(text_for_extract))
 
 
 def extract_v1(txt: str) -> set:
@@ -17,7 +18,7 @@ def extract_v1(txt: str) -> set:
     # default
     r = Rake()
     # Extraction given the text
-    r.extract_keywords_from_text(text)
+    r.extract_keywords_from_text(txt)
 
     # Extraction given the list of strings where each string is a sentence.
     # sentences = nltk.tokenize.sent_tokenize(text)
@@ -32,11 +33,13 @@ def extract_v1(txt: str) -> set:
 
     return set(res[:(10 if len(res) >= 10 else len(res))])
 
+
 def extract_v2(txt: str) -> set:
     # algorithm from https://github.com/JRC1995/TextRank-Keyword-Extraction/blob/master/TextRank.ipynb
 
     # nltk.download('punkt')
 
+    # function to pre-process the text
     def clean(text):
         text = text.lower()
         printable = set(string.printable)
@@ -51,19 +54,18 @@ def extract_v2(txt: str) -> set:
     #print("Tokenized Text: \n")
     #print(text)
 
+    # download/update POS tag list and tag each token
     nltk.download('averaged_perceptron_tagger')
-
     POS_tag = nltk.pos_tag(text)
 
     #print("Tokenized Text with POS tags: \n")
     #print(POS_tag)
 
+    # download/update lemmatizer english set
     nltk.download('wordnet')
-
     wordnet_lemmatizer = WordNetLemmatizer()
 
     adjective_tags = ['JJ', 'JJR', 'JJS']
-
     lemmatized_text = []
 
     for word in POS_tag:
@@ -75,6 +77,7 @@ def extract_v2(txt: str) -> set:
     #print("Text tokens after lemmatization of adjectives and nouns: \n")
     #print(lemmatized_text)
 
+    # tag each token
     POS_tag = nltk.pos_tag(lemmatized_text)
 
     #print("Lemmatized text with POS tags: \n")
