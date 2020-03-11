@@ -149,7 +149,7 @@ class Twint:
         await task
 
     async def run(self):
-        if self.config.TwitterSearch or (self.config.Profile and self.config.Profile_full) or self.config.Favorite:
+        if self.config.Profile and not self.config.Profile_full:
             self.user_agent = await get.RandomUserAgent(wa=True)
         else:
             self.user_agent = await get.RandomUserAgent()
