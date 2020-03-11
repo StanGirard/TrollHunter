@@ -28,17 +28,17 @@ def get_info_from_user(username, args):
     user = User(username)
 
     get_info_user(user, args)
-    elastic.store_users(user.info_df)
+    # elastic.store_users(user.info_df)
 
     if "tweet" not in args or int(args["tweet"]) == 1:
         get_tweet_from_user(user, args)
-        elastic.store_tweets(user.tweets_df)
+        # elastic.store_tweets(user.tweets_df)
 
     if "follow" not in args or int(args["follow"]) == 1:
         get_follower_user(user, args)
         get_following_user(user, args)
-        elastic.store_users(user.info_follow_df)
-        elastic.store_interaction(user.interaction_df)
+        # elastic.store_users(user.info_follow_df)
+        # elastic.store_interaction(user.interaction_df)
 
     return "user"
 
