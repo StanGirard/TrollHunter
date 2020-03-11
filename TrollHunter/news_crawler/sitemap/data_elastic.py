@@ -3,9 +3,7 @@ import time
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
-
-
-#Check for empty values
+# Check for empty values
 from TrollHunter.news_crawler.database.postgres_database import get_all_sitemap
 from TrollHunter.news_crawler.sitemap.sitemap import parse_sitemap
 
@@ -13,9 +11,11 @@ from TrollHunter.news_crawler.sitemap.sitemap import parse_sitemap
 def safe_value(field_val):
     return field_val if not pd.isna(field_val) else "Other"
 
+
 def filterKeys(document, headers):
     use_these_keys = ["Source"] + headers
     return {key: document[key] for key in use_these_keys }
+
 
 def doc_generator(df, headers):
     df_iter = df.iterrows()
@@ -30,9 +30,10 @@ def doc_generator(df, headers):
         except StopIteration:
             return
 
-def elastic_sitemap(url, headers, id_trust, db_sitemap, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
+
+def elastic_sitemap(sitemap, trust_levels, db_sitemap, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
     es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password) )
-    dataframe = parse_sitemap(url, headers, id_trust, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb, range_check=20)
+    dataframe = parse_sitemap(sitemap, trust_levels, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb, range_check=20)
     print(dataframe)
     if type(dataframe) == bool:
         return
@@ -41,9 +42,10 @@ def elastic_sitemap(url, headers, id_trust, db_sitemap, host = "142.93.170.234",
     length_dataframe = len(dataframe.index)
     if length_dataframe > 0:
         print(length_dataframe, " doc(s) will be put in ES")
-        print(helpers.bulk(es, doc_generator(dataframe, headers)))
+        print(helpers.bulk(es, doc_generator(dataframe, sitemap[2])))
     else:
         print("No new value")
+
 
 def transform_none_lastmod(pdResult: pd.DataFrame):
     for index, row in pdResult.iterrows():
@@ -54,6 +56,7 @@ def transform_none_lastmod(pdResult: pd.DataFrame):
             timestamp = time.mktime(time.strptime(date_in, '%Y-%m-%dT%H:%M:%S'))
 
         row[2] = timestamp
+
 
 def iterator(ar):
     for item in ar:
