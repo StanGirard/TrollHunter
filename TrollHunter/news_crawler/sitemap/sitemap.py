@@ -45,9 +45,9 @@ def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
 
 # Pass the headers you want to retrieve from the xml such as ["loc", "lastmod"]
 
-def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False, range_check = 20):
+def parse_sitemap(sitemap, trust_levels, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False, range_check = 20):
 
-    resp = requests.get(url)
+    resp = requests.get(sitemap[0])
 
     # we didn't get a valid response, bail
     if (200 != resp.status_code):
@@ -61,28 +61,28 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
     if sort and urls:
         urls.sort(key=sort_loc)
     sitemaps = soup.findAll('sitemap')
-    new_list = ["Source"] + headers
+    new_list = ["Source"] + sitemap[2] + ["Trust level"]
     panda_out_total = pd.DataFrame([], columns=new_list)
 
     if not urls and not sitemaps:
         return False
 
-    sitemap_db = db_sitemaps.get(url)
-    url_headers = sitemap_db[2] if sitemap_db and sitemap_db[2] else headers
+    sitemap_db = db_sitemaps.get(sitemap[0])
+    url_headers = sitemap_db[2] if sitemap_db and sitemap_db[2] else sitemap[2]
 
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
             test = u.find('loc').string
-            if check_sitemap(u, db_sitemaps.get(test), url_headers):
-                panda_recursive = parse_sitemap(test, headers, db_sitemaps, es, sort, influxdb = influxdb, range_check = range_check)
+            if check_sitemap(u, db_sitemaps.get(test), url_headers, sitemap[3]):
+                panda_recursive = parse_sitemap([test, None, url_headers, sitemap[3]], trust_levels, db_sitemaps, es, sort, influxdb = influxdb, range_check = range_check)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
 
     # storage for later...
     out = []
 
     # Creates a hash of the parent sitemap
-    hash_sitemap = hashlib.md5(str(url).encode('utf-8')).hexdigest()
+    hash_sitemap = hashlib.md5(str(sitemap[0]).encode('utf-8')).hexdigest()
 
     # Extract the keys we want
     count = 1
@@ -92,7 +92,7 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
         
         values = [hash_sitemap]
         #Log into influxdb
-        if_influx_url(influxdb, url)
+        if_influx_url(influxdb, sitemap[0])
         for head in url_headers:
             loc = None
             loc = u.find(head)
@@ -101,6 +101,7 @@ def parse_sitemap( url,headers, db_sitemaps, es: Elasticsearch, indexEs = "sitem
             else:
                 loc = loc.string
             values.append(loc)
+        values.append(trust_levels[sitemap[3]])
         out.append(values)
         if count == range_check:
             out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
@@ -125,7 +126,7 @@ def build_panda_out(out, panda_out_total, new_list):
     return panda_out
 
 
-def check_sitemap(sitemap, data_sitemap, headers):
+def check_sitemap(sitemap, data_sitemap, headers, id_trust):
     loc = sitemap.find('loc').string
     lastmod = sitemap.find('lastmod')
     if data_sitemap:
@@ -135,6 +136,6 @@ def check_sitemap(sitemap, data_sitemap, headers):
             else:
                 return False
     else:
-        insert_sitemap(loc, lastmod.string, headers)
+        insert_sitemap(loc, lastmod.string, headers, id_trust)
     return True
 

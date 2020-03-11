@@ -21,7 +21,7 @@ setup(
 
     packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
               "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage",
-              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto", "TrollHunter.Gorafi"],
+              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto", "TrollHunter.Gorafi", "TrollHunter.news_crawler"],
 
     install_requires=[
         "aiodns==2.0.0",

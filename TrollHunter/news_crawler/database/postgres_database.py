@@ -75,15 +75,31 @@ def update_sitemap(id, data):
         disconnect_db(conn, cur)
 
 
-def insert_sitemap(loc, lasmod, url_headers):
+def insert_sitemap(loc, lasmod, url_headers, id_trust):
     conn = None
     cur = None
     try:
         conn = connect_db()
         cur = conn.cursor()
-        query = """insert into sitemap values (%s, %s, %s)"""
-        cur.execute(query, (loc, lasmod, url_headers))
+        query = """insert into sitemap values (%s, %s, %s, %s)"""
+        cur.execute(query, (loc, lasmod, url_headers, id_trust))
         conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        disconnect_db(conn, cur)
+
+
+def get_trust_levels():
+    conn = None
+    cur = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        query = """select * from trust_level"""
+        cur.execute(query)
+        data = cur.fetchall()
+        return data
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
