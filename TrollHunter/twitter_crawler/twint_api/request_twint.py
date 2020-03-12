@@ -22,6 +22,7 @@ args:
     retweet:        set to 1 to retrieve retweet (default: 0)
     search:         search terms
     tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
+    depth:          search tweet and info from list of follow
     
 TODO: Retrieve tweet twitted to the user ?
 """
@@ -29,11 +30,12 @@ TODO: Retrieve tweet twitted to the user ?
 def get_info_from_user(username, args):
     reset_data()
     user = User(username)
-    crawler.crawl.delay("test")
 
     get_info_user(user, args)
     elastic.store_users(user.info_df)
+    get_user_interaction(args,user)
 
+def get_user_interaction(args,user):
     if "tweet" not in args or int(args["tweet"]) == 1:
         get_tweet_from_user(user, args)
         elastic.store_tweets(user.tweets_df)
@@ -45,6 +47,8 @@ def get_info_from_user(username, args):
         get_follower_user(user, args)
         get_following_user(user, args)
         elastic.store_users(user.info_actor_df)
+
+        crawler.crawl.delay(user.info_actor_df,args)
 
     elastic.store_interaction(user.interaction_df)
     return "user"
