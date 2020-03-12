@@ -18,43 +18,41 @@ def print_help():
     retweet:        set to 1 to retrieve retweet (default: 0)
     tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
     search:         search terms)""")
-def run(argv):
-    opts = None
-    dict_args = {"tweet":1,"follow":1,"limit":100,"follow_limit":-1,"since":None,"until":None,"retweet":"false","search":None,"tweet_interact":0}
-    try:
-        opts, args = getopt.getopt(argv, "ht:f:l:rs:u:i", ["help", "tweet=","follow=","limit=","retweet","since=","until=","follow_limit=","search=","tweet_interact"])
-
-    except getopt.GetoptError as e:
-        print_help()
-        sys.exit()
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            print_help()
-            sys.exit()
-        elif opt in ("-t", "--tweet"):
-            dict_args["tweet"] = arg
-        elif opt in ("-f", "--follow"):
-            dict_args["follow"] = arg
-        elif opt in ("-l","--limit"):
-            dict_args["limit"] = arg
-        elif opt in ("--follow_limit"):
-            dict_args["follow_limit"] = arg
-        elif opt in ("-s","--since"):
-            dict_args["since"] = arg
-        elif opt in ("-u", "--until"):
-            dict_args["until"] = arg
-        elif opt in ("-r","--retweet"):
-            dict_args["retweet"] = 1
-        elif opt in ("--search"):
-            dict_args["follow"] = arg
-        elif opt in ("-i,--tweet_interact"):
-            dict_args["tweet_interact"] = 1
-    crawl(dict_args)
+# def run(argv):
+#     opts = None
+#     dict_args = {"tweet":1,"follow":1,"limit":100,"follow_limit":-1,"since":None,"until":None,"retweet":"false","search":None,"tweet_interact":0}
+#     try:
+#         opts, args = getopt.getopt(argv, "ht:f:l:rs:u:i", ["help", "tweet=","follow=","limit=","retweet","since=","until=","follow_limit=","search=","tweet_interact"])
+#
+#     except getopt.GetoptError as e:
+#         print_help()
+#         sys.exit()
+#     for opt, arg in opts:
+#         if opt in ("-h", "--help"):
+#             print_help()
+#             sys.exit()
+#         elif opt in ("-t", "--tweet"):
+#             dict_args["tweet"] = arg
+#         elif opt in ("-f", "--follow"):
+#             dict_args["follow"] = arg
+#         elif opt in ("-l","--limit"):
+#             dict_args["limit"] = arg
+#         elif opt in ("--follow_limit"):
+#             dict_args["follow_limit"] = arg
+#         elif opt in ("-s","--since"):
+#             dict_args["since"] = arg
+#         elif opt in ("-u", "--until"):
+#             dict_args["until"] = arg
+#         elif opt in ("-r","--retweet"):
+#             dict_args["retweet"] = 1
+#         elif opt in ("--search"):
+#             dict_args["follow"] = arg
+#         elif opt in ("-i,--tweet_interact"):
+#             dict_args["tweet_interact"] = 1
+#     crawl(dict_args)
 
 @app_crawler.task
 def crawl(args):
     # list_tweet = crawl_tweet(args)
     print(args)
 
-if __name__ == '__main__':
-    run(sys.argv[1:])

@@ -1,4 +1,7 @@
 from __future__ import absolute_import
+
+import sys
+
 from celery import Celery
 from celery.bin import worker
 app = Celery('crawler-api',
@@ -18,5 +21,12 @@ def run_crawler():
     worker_celery.run(**option)
 
 if __name__ == '__main__':
-    # run_api_worker()
-    run_crawler()
+    arg = sys.argv[1:]
+    if len(arg) == 0:
+        run_crawler()
+        run_api_worker()
+    elif "api" in arg:
+        run_api_worker()
+    else :
+        run_crawler()
+
