@@ -3,7 +3,7 @@ import unidecode
 skip_charac = ["\"", "\'", "\n"]
 
 
-class Tweet_obj:
+class TweetObj:
     def __init__(self, tweet):
         self.datestamp = tweet.datestamp
         self.timestamp = tweet.timestamp

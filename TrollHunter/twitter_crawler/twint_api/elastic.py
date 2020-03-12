@@ -1,8 +1,4 @@
-from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
-
-import json
-import pandas as pd
 
 
 class Elastic:
@@ -30,27 +26,15 @@ class Elastic:
     def filter_keys(document, headers):
         return {key: document[key] for key in headers}
 
-    def doc_from_df(self, df, headers, index, id_key):
-        df_iter = df.iterrows()
-        for _, document in df_iter:
+    @staticmethod
+    def doc_from_dict(docs, index):
+        for doc in docs:
             try:
                 yield {
                     "_index": index,
                     "_type": "_doc",
-                    "_id": f"{document[id_key]}",
-                    "_source": self.filter_keys(document, headers),
-                }
-            except StopIteration:
-                return
-
-    def doc_from_dict(self, dict, index):
-        for document in dict:
-            try:
-                yield {
-                    "_index": index,
-                    "_type": "_doc",
-                    "_id": f"{document.id}",
-                    "_source": vars(document),
+                    "_id": f"{doc.id}",
+                    "_source": vars(doc),
                 }
             except StopIteration:
                 return

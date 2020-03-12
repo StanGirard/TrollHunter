@@ -2,10 +2,10 @@ import datetime
 import pandas as pd
 
 from TrollHunter.twitter_crawler import crawler
-from TrollHunter.twitter_crawler.User import User
-from TrollHunter.twitter_crawler.tweet_obj import Tweet_obj
 from TrollHunter.twitter_crawler.celeryapp import app
-from TrollHunter.twitter_crawler.elastic import Elastic
+from TrollHunter.twitter_crawler.twint_api.user import User
+from TrollHunter.twitter_crawler.twint_api.tweetobj import TweetObj
+from TrollHunter.twitter_crawler.twint_api.elastic import Elastic
 from TrollHunter.twitter_crawler.twint import twint
 
 HIDE_TWEET_OUPUT = True
@@ -68,13 +68,7 @@ def retrieve_tweet_actors(user, args):
 
 
 def get_follower_user(user, args):
-    config = get_twint_config(args, user=user)
-    config.User_full = False
-    if "follow_limit" in args and int(args["follow_limit"]) > -1:
-        config.Limit = int(args["follow_limit"])
-    else:
-        config.Limit = user.user_info.followers
-    twint.output.follows_list = []
+    config = init_follow_retrieval(user, args)
     twint.run.Followers(config)
     i = 1
     limit = config.Limit
@@ -87,13 +81,7 @@ def get_follower_user(user, args):
 
 
 def get_following_user(user, args):
-    config = get_twint_config(args, user=user)
-    config.User_full = False
-    if "follow_limit" in args and int(args["follow_limit"]) > -1:
-        config.Limit = int(args["follow_limit"])
-    else:
-        config.Limit = user.user_info.followers
-    twint.output.follows_list = []
+    config = init_follow_retrieval(user, args)
     twint.run.Following(config)
     i = 1
     limit = config.Limit
@@ -103,6 +91,17 @@ def get_following_user(user, args):
         user.set_follow(following.user_info, user.user_info.id, following.user_info.id)
         print("Processed", i, "/", limit, "following")
         i += 1
+
+
+def init_follow_retrieval(user, args):
+    config = get_twint_config(args, user=user)
+    config.User_full = False
+    if "follow_limit" in args and int(args["follow_limit"]) > -1:
+        config.Limit = int(args["follow_limit"])
+    else:
+        config.Limit = user.user_info.followers
+    twint.output.follows_list = []
+    return config
 
 
 def get_info_user(user, args):
@@ -129,7 +128,6 @@ def get_tweet_from_user(user, args):
 @app.task
 def get_tweet_from_search(args):
     config = twint.Config()
-    config.Username = None
     config.Store_object = True
     if not "search" in args:
         return " bad request"
@@ -160,7 +158,7 @@ def get_origin_tweet(args):
 
     tweets = twint.output.tweets_list
 
-    tweet_result = reversed([Tweet_obj(t) for t in tweets])
+    tweet_result = reversed([TweetObj(t) for t in tweets])
     origin = None
 
     for t in tweet_result:
