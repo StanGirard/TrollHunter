@@ -49,7 +49,8 @@ def get_user_interaction(args,user):
         get_following_user(user, args)
         elastic.store_users(user.actors_info)
 
-        # crawler.crawl.delay(user.info_actor_df,args)
+        if "depth" in args and int(args["depth"]) == 1:
+            crawler.crawl.delay(user.actors_info, args)
 
     elastic.store_interactions(user.interactions)
     return "user"
@@ -181,7 +182,8 @@ def get_twint_config(args, user=None):
     config.Hide_output = HIDE_TWEET_OUPUT
     if user is not None:
         config.Username = user.username
-        config.User_id = user.user_id
+        if user.user_info is not None:
+            config.User_id = user.user_info.id
 
     if "limit" in args:
         config.Limit = int(args["limit"])

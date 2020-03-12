@@ -2,7 +2,7 @@ class User:
     def __init__(self, username):
         self.username = username
 
-        self.user_info = []
+        self.user_info = None
         self.actors_info = []
         self.interactions = []
         self.tweets = []
@@ -52,7 +52,6 @@ class User:
 
     def add_interaction(self, id, twittos_a, interaction, twittos_b, source=''):
         self.interactions.append(Interaction(id, twittos_a, interaction, twittos_b, source))
-
 
 class Interaction:
     def __init__(self, id, twittos_a, interaction, twittos_b, source):
