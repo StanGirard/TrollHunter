@@ -1,12 +1,18 @@
 # Always prefer setuptools over distutils
 from setuptools import setup
 
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 setup(
     name='TrollHunter',
 
-    version='0.2.2',
+    version='0.2.4',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license="GPL",
     classifiers=[
         'Programming Language :: Python :: 3',
@@ -15,7 +21,8 @@ setup(
 
     packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
               "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage",
-              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto.Keywork"],
+              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto", "TrollHunter.Gorafi", "TrollHunter.news_crawler"],
+
     install_requires=[
         "aiodns==2.0.0",
         "aiofiles==0.4.0",
@@ -78,6 +85,7 @@ setup(
         "wsproto==0.15.0",
         "yarl==1.4.2",
         "zipp==3.1.0",
+        "nltk==3.4.5",
         "rake-nltk==1.0.4"
     ]
 
