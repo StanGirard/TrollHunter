@@ -1,5 +1,7 @@
 import datetime
 import pandas as pd
+
+from TrollHunter.twitter_crawler import crawler
 from TrollHunter.twitter_crawler.User import User
 from TrollHunter.twitter_crawler.tweet_obj import Tweet_obj
 from TrollHunter.twitter_crawler.celeryapp import app
@@ -27,6 +29,7 @@ TODO: Retrieve tweet twitted to the user ?
 def get_info_from_user(username, args):
     reset_data()
     user = User(username)
+    crawler.crawl.delay("test")
 
     get_info_user(user, args)
     elastic.store_users(user.info_df)
@@ -136,6 +139,12 @@ def get_tweet_from_search(args):
     tweets_result_df = twint.output.panda.Tweets_df
 
     return format_tweet_to_html(tweet_result, "test")
+
+def crawl_tweet(args):
+    reset_data()
+    config = get_twint_config(args)
+    twint.run.Search(config)
+    return  twint.output.tweets_list
 
 
 @app.task

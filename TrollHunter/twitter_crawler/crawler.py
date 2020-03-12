@@ -1,7 +1,10 @@
 import getopt
 import sys
+
+from TrollHunter.twitter_crawler.celeryapp import app_crawler
 from TrollHunter.twitter_crawler.twint import twint
-from TrollHunter.twitter_crawler.twint_api.request_twint import get_twint_config
+# from TrollHunter.twitter_crawler.twint_api.request_twint import  crawl_tweet
+
 
 def print_help():
     print("""
@@ -9,7 +12,7 @@ def print_help():
     tweet:          set to 0 to avoid tweet (default: 1)
     follow:         set to 0 to avoid follow (default: 1)
     limit:          set the number of tweet to retrieve (Increments of 20, default: 100)
-    follow_limit    set the number of following and followers to retrieve 
+    follow_limit    set the number of following and followers to retrieve
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
@@ -17,7 +20,7 @@ def print_help():
     search:         search terms)""")
 def run(argv):
     opts = None
-    dict_args = {"tweet":1,"follow":1,"limit":100,"follow_limit":-1,"since":None,"until":None,"retweet":0,"search":None,"tweet_interact":0}
+    dict_args = {"tweet":1,"follow":1,"limit":100,"follow_limit":-1,"since":None,"until":None,"retweet":"false","search":None,"tweet_interact":0}
     try:
         opts, args = getopt.getopt(argv, "ht:f:l:rs:u:i", ["help", "tweet=","follow=","limit=","retweet","since=","until=","follow_limit=","search=","tweet_interact"])
 
@@ -48,7 +51,9 @@ def run(argv):
             dict_args["tweet_interact"] = 1
     crawl(dict_args)
 
+@app_crawler.task
 def crawl(args):
+    # list_tweet = crawl_tweet(args)
     print(args)
 
 if __name__ == '__main__':
