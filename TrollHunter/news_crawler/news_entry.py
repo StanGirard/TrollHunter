@@ -5,7 +5,7 @@ import time
 
 def news_crawler():
     db_sitemap = {x[0]: x for x in get_all_sitemap()}
-    trust_levels = {x[0]: x for x in get_trust_levels()}
+    trust_levels = {x[0]: x[1] for x in get_trust_levels()}
     for parent in get_sitemap_parent():
         elastic_sitemap(parent, trust_levels, db_sitemap, sort='loc', influxdb=True)
 
