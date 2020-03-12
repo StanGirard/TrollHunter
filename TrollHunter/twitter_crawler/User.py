@@ -67,6 +67,7 @@ class User:
             following_id)
 
     def add_interaction(self, id, twittos_a, interaction, twittos_b, source=''):
+        self.init_interaction()
         if id in self.interaction_set:
             return
         self.interaction_set.add(id)
