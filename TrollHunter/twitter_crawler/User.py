@@ -5,10 +5,14 @@ class User:
         self.info_df = None
         self.info_follow_df = None
         self.interaction_df = None
+        self.user_id = None
 
 
     def set_info_to_df(self,user_obj):
         self.info_df = pd.DataFrame.from_dict([vars(user_obj)])
+
+    def set_user_id(self, user_id):
+        self.user_id = user_id
 
     def set_follower_df(self, follow):
         self.follower_df = follow
