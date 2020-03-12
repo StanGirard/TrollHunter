@@ -32,13 +32,14 @@ def get_info_from_user(username, args):
     user = User(username)
 
     get_info_user(user, args)
-    elastic.store_users(user.info_df)
+    elastic.store_user(user.user_info)
     get_user_interaction(args,user)
+
 
 def get_user_interaction(args,user):
     if "tweet" not in args or int(args["tweet"]) == 1:
         get_tweet_from_user(user, args)
-        elastic.store_tweets(user.tweets_df)
+        elastic.store_tweets(user.tweets)
 
         if "tweet_interact" in args and int(args["tweet_interact"]) == 1:
             retrieve_tweet_actors(user, args)
@@ -46,61 +47,59 @@ def get_user_interaction(args,user):
     if "follow" not in args or int(args["follow"]) == 1:
         get_follower_user(user, args)
         get_following_user(user, args)
-        elastic.store_users(user.info_actor_df)
+        elastic.store_users(user.actors_info)
 
-        crawler.crawl.delay(user.info_actor_df,args)
+        # crawler.crawl.delay(user.info_actor_df,args)
 
-    elastic.store_interaction(user.interaction_df)
+    elastic.store_interactions(user.interactions)
     return "user"
 
+
 def retrieve_tweet_actors(user, args):
-    tweet_users = user.extract_tweet_interaction(twint.output.tweets_list)
+    tweet_users = user.extract_tweet_interaction()
     i = 1
     for tweet_user in tweet_users:
         tweet_user = User(tweet_user)
         get_info_user(tweet_user, args)
-        user.add_actor_info(tweet_user.info_df)
+        user.add_actor_info(tweet_user.user_info)
         print("Processed", i, "/", len(tweet_users), "tweet actors")
         i += 1
 
+
 def get_follower_user(user, args):
     config = get_twint_config(args, user=user)
-    config.Pandas_au = True
     config.User_full = False
     if "follow_limit" in args and int(args["follow_limit"]) > -1:
         config.Limit = int(args["follow_limit"])
     else:
-        config.Limit = user.info_df.loc[0]["followers"]
+        config.Limit = user.user_info.followers
     twint.output.follows_list = []
     twint.run.Followers(config)
-    user.set_follower_df(twint.output.panda.Follow_df)
     i = 1
     limit = config.Limit
     for username in twint.output.follows_list:
         follower = User(username)
         get_info_user(follower, args)
-        user.set_follow_df(follower.info_df, follower.info_df.loc[0]['id'], user.info_df.loc[0]['id'])
+        user.set_follow(follower.user_info, follower.user_info.id, user.user_info.id)
         print("Processed", i, "/", limit, "followers")
         i += 1
 
 
 def get_following_user(user, args):
     config = get_twint_config(args, user=user)
-    config.Pandas_au = True
     config.User_full = False
     if "follow_limit" in args and int(args["follow_limit"]) > -1:
         config.Limit = int(args["follow_limit"])
     else:
-        config.Limit = user.info_df.loc[0]["following"]
+        config.Limit = user.user_info.followers
     twint.output.follows_list = []
     twint.run.Following(config)
-    user.set_following_df(twint.output.panda.Follow_df)
     i = 1
     limit = config.Limit
     for username in twint.output.follows_list:
         following = User(username)
         get_info_user(following, args)
-        user.set_follow_df(following.info_df, user.info_df.loc[0]['id'], following.info_df.loc[0]['id'])
+        user.set_follow(following.user_info, user.user_info.id, following.user_info.id)
         print("Processed", i, "/", limit, "following")
         i += 1
 
@@ -109,13 +108,11 @@ def get_info_user(user, args):
     config = get_twint_config(args, user=user)
     config.User_full = True
     config.Profile_full = True
-    config.Pandas = False
     config.Since = datetime.date.today().isoformat()
     # Need Lookup because bug with twint and flask
     twint.run.Search(config)
     twint.run.Lookup(config)
-    user.set_user_id(config.User_id)
-    user.set_info_to_df(twint.output.users_list[-1])
+    user.set_user_info(twint.output.users_list[-1])
 
 
 def get_tweet_from_user(user, args):
@@ -124,8 +121,8 @@ def get_tweet_from_user(user, args):
     config.Profile_full = True
     twint.output.tweets_list.clear()
     twint.run.Profile(config)
-    user.set_tweet_df(twint.output.panda.Tweets_df)
-    return twint.output.tweets_list
+    user.set_tweets(twint.output.tweets_list)
+    return user.tweets
 
 
 @app.task
@@ -139,8 +136,6 @@ def get_tweet_from_search(args):
     twint.output.tweets_list.clear()
     twint.run.Search(config)
     tweet_result = twint.output.tweets_list
-
-    tweets_result_df = twint.output.panda.Tweets_df
 
     return format_tweet_to_html(tweet_result, "test")
 
@@ -202,7 +197,6 @@ def get_twint_config(args, user=None):
     if "search" in args:
         config.Search = args["search"]
 
-    config.Pandas = True
     config.Store_object = True
     return config
 
