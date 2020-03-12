@@ -14,7 +14,7 @@ args:
     tweet:          set to 0 to avoid tweet (default: 1)
     follow:         set to 0 to avoid follow (default: 1)
     limit:          set the number of tweet to retrieve (Increments of 20, default: 100)
-    follow_limit:    set the number of following and followers to retrieve 
+    follow_limit:   set the number of following and followers to retrieve (-1 to avoid)
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
@@ -60,7 +60,7 @@ def get_follower_user(user, args):
     config = get_twint_config(args, user=user)
     config.Pandas_au = True
     config.User_full = False
-    if "follow_limit" in args:
+    if "follow_limit" in args and int(args["follow_limit"]) > -1:
         config.Limit = int(args["follow_limit"])
     else:
         config.Limit = user.info_df.loc[0]["followers"]
@@ -73,7 +73,7 @@ def get_follower_user(user, args):
         follower = User(username)
         get_info_user(follower, args)
         user.set_follow_df(follower.info_df, follower.info_df.loc[0]['id'], user.info_df.loc[0]['id'])
-        print("Processed ", i, "/", limit, " followers")
+        print("Processed", i, "/", limit, "followers")
         i += 1
 
 
@@ -81,7 +81,7 @@ def get_following_user(user, args):
     config = get_twint_config(args, user=user)
     config.Pandas_au = True
     config.User_full = False
-    if "follow_limit" in args:
+    if "follow_limit" in args and int(args["follow_limit"]) > -1:
         config.Limit = int(args["follow_limit"])
     else:
         config.Limit = user.info_df.loc[0]["following"]
@@ -94,7 +94,7 @@ def get_following_user(user, args):
         following = User(username)
         get_info_user(following, args)
         user.set_follow_df(following.info_df, user.info_df.loc[0]['id'], following.info_df.loc[0]['id'])
-        print("Processed ", i, "/", limit, " following")
+        print("Processed", i, "/", limit, "following")
         i += 1
 
 
