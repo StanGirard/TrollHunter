@@ -8,9 +8,7 @@ app = Flask(__name__)
 
 @app.route('/tweets/<string:user>', methods=['GET'])
 def user_tweet(user):
-    for i in range(100):
-        request_twint.get_info_from_user.delay(user, request.args)
-    return "200"
+    request_twint.get_info_from_user.delay(user, request.args)
 
 
 @app.route('/tweets/', methods=['GET'])
