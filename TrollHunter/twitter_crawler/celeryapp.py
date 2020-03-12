@@ -9,3 +9,6 @@ def run():
     option = {'loglevel': 'INFO'}
     worker_celery.run(**option)
     # app.start(["-A", "request", "worker", "--loglevel","info"])
+
+if __name__ == '__main__':
+    run()

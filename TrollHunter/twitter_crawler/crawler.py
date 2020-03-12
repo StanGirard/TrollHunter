@@ -25,5 +25,6 @@ def origin_tweet():
 
 def run():
     app.run()
+
 if __name__ == '__main__':
-    app.run()
+    run()
