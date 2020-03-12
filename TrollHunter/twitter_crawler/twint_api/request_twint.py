@@ -194,7 +194,7 @@ def get_twint_config(args, user=None):
     if "until" in args:
         config.Until = args["until"]
     if "retweet" in args:
-        config.Retweets = args["retweet"].lower() == "true"
+        config.Retweets = bool(int(args["retweet"]) == 1)  # Do not convert directly form str to bool
     if "search" in args:
         config.Search = args["search"]
 
