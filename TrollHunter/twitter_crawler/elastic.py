@@ -18,6 +18,8 @@ class Elastic:
         print(helpers.bulk(self.es, self.doc_from_df(tweets, tweets.columns, "twitter_tweet", "id")))
 
     def store_interaction(self, interactions):
+        if interactions is None:
+            return
         print("Store ", len(interactions.index), " interaction(s)")
         print(helpers.bulk(self.es, self.doc_from_df(interactions, interactions.columns, "twitter_interaction", "id")))
 

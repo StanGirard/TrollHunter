@@ -14,11 +14,12 @@ args:
     tweet:          set to 0 to avoid tweet (default: 1)
     follow:         set to 0 to avoid follow (default: 1)
     limit:          set the number of tweet to retrieve (Increments of 20, default: 100)
-    follow_limit    set the number of following and followers to retrieve 
+    follow_limit:    set the number of following and followers to retrieve 
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
     search:         search terms
+    tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
     
 TODO: Retrieve tweet twitted to the user ?
 """
@@ -34,14 +35,26 @@ def get_info_from_user(username, args):
         get_tweet_from_user(user, args)
         elastic.store_tweets(user.tweets_df)
 
+        if "tweet_interact" in args and int(args["tweet_interact"]) == 1:
+            retrieve_tweet_actors(user, args)
+
     if "follow" not in args or int(args["follow"]) == 1:
         get_follower_user(user, args)
         get_following_user(user, args)
-        elastic.store_users(user.info_follow_df)
-        elastic.store_interaction(user.interaction_df)
+        elastic.store_users(user.info_actor_df)
 
+    elastic.store_interaction(user.interaction_df)
     return "user"
 
+def retrieve_tweet_actors(user, args):
+    tweet_users = user.extract_tweet_interaction(twint.output.tweets_list)
+    i = 1
+    for tweet_user in tweet_users:
+        tweet_user = User(tweet_user)
+        get_info_user(tweet_user, args)
+        user.add_actor_info(tweet_user.info_df)
+        print("Processed", i, "/", len(tweet_users), "tweet actors")
+        i += 1
 
 def get_follower_user(user, args):
     config = get_twint_config(args, user=user)
@@ -51,11 +64,12 @@ def get_follower_user(user, args):
         config.Limit = int(args["follow_limit"])
     else:
         config.Limit = user.info_df.loc[0]["followers"]
+    twint.output.follows_list = []
     twint.run.Followers(config)
     user.set_follower_df(twint.output.panda.Follow_df)
     i = 1
     limit = config.Limit
-    for username in user.follower_df.iloc[0]['followers']:
+    for username in twint.output.follows_list:
         follower = User(username)
         get_info_user(follower, args)
         user.set_follow_df(follower.info_df, follower.info_df.loc[0]['id'], user.info_df.loc[0]['id'])
@@ -71,16 +85,18 @@ def get_following_user(user, args):
         config.Limit = int(args["follow_limit"])
     else:
         config.Limit = user.info_df.loc[0]["following"]
+    twint.output.follows_list = []
     twint.run.Following(config)
     user.set_following_df(twint.output.panda.Follow_df)
     i = 1
     limit = config.Limit
-    for username in user.following_df.iloc[0]['following']:
+    for username in twint.output.follows_list:
         following = User(username)
         get_info_user(following, args)
         user.set_follow_df(following.info_df, user.info_df.loc[0]['id'], following.info_df.loc[0]['id'])
         print("Processed ", i, "/", limit, " following")
         i += 1
+
 
 def get_info_user(user, args):
     config = get_twint_config(args, user=user)
