@@ -1,3 +1,3 @@
 from .database import *
 from .sitemap import *
-from .news_entry import *
+from .news_entry import scheduler_news
