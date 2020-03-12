@@ -13,12 +13,13 @@ def print_help():
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
+    tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
     search:         search terms)""")
 def run(argv):
     opts = None
-    dict_args = {"tweet":1,"follow":1,"limit":100,"follow_limit":-1,"since":None,"until":None,"retweet":0,"search":None}
+    dict_args = {"tweet":1,"follow":1,"limit":100,"follow_limit":-1,"since":None,"until":None,"retweet":0,"search":None,"tweet_interact":0}
     try:
-        opts, args = getopt.getopt(argv, "ht:f:l:rs:u:", ["help", "tweet=","follow=","limit=","retweet","since=","until=","follow_limit=","search="])
+        opts, args = getopt.getopt(argv, "ht:f:l:rs:u:i", ["help", "tweet=","follow=","limit=","retweet","since=","until=","follow_limit=","search=","tweet_interact"])
 
     except getopt.GetoptError as e:
         print_help()
@@ -43,6 +44,8 @@ def run(argv):
             dict_args["retweet"] = 1
         elif opt in ("--search"):
             dict_args["follow"] = arg
+        elif opt in ("-i,--tweet_interact"):
+            dict_args["tweet_interact"] = 1
     crawl(dict_args)
 
 def crawl(args):
