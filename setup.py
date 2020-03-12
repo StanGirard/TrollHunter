@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name='TrollHunter',
 
-    version='0.2.4',
+    version='0.2.5',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
     long_description=long_description,
@@ -21,7 +21,7 @@ setup(
 
     packages=["TrollHunter.twitter_crawler","TrollHunter.twitter_crawler.twint_api",
               "TrollHunter.twitter_crawler.twint.twint","TrollHunter.twitter_crawler.twint.twint.storage",
-              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto", "TrollHunter.Gorafi", "TrollHunter.news_crawler"],
+              "TrollHunter.loggers","TrollHunter.news_crawler.sitemap","TrollHunter.news_crawler.database", "TrollHunter.texto", "TrollHunter.news_crawler"],
 
     install_requires=[
         "aiodns==2.0.0",
