@@ -47,8 +47,8 @@ def get_user_interaction(args,user):
         get_follower_user(user, args)
         get_following_user(user, args)
         elastic.store_users(user.info_actor_df)
-
-        crawler.crawl.delay(user.info_actor_df,args)
+        if "depth" in args and int(args["depth"]) ==1:
+            crawler.crawl.delay(user.info_actor_df,args)
 
     elastic.store_interaction(user.interaction_df)
     return "user"
