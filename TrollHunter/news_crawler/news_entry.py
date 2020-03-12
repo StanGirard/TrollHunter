@@ -11,12 +11,14 @@ def news_crawler():
 
 
 def scheduler_news():
+    print('Start crawler/indexer sitemap')
     start = time.time()
     while True:
         try:
             news_crawler()
         except Exception as error:
             print(error)
+        print('Sleeping')
         sleep = time.time() - start
         if sleep < 7200:
             time.sleep(7200 - sleep)
