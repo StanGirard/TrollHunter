@@ -73,7 +73,7 @@ def parse_sitemap(sitemap, trust_levels, db_sitemaps, es: Elasticsearch, indexEs
     # Recursive call to the the function if sitemap contains sitemaps
     if sitemaps:
         for u in sitemaps:
-            test = u.find('loc').string
+            test = u.find('loc').string.strip('\n')
             if check_sitemap(u, db_sitemaps.get(test), url_headers, sitemap[3]):
                 panda_recursive = parse_sitemap([test, None, url_headers, sitemap[3]], trust_levels, db_sitemaps, es, sort, influxdb = influxdb, range_check = range_check)
                 panda_out_total = pd.concat([panda_out_total, panda_recursive], ignore_index=True)
@@ -128,14 +128,14 @@ def build_panda_out(out, panda_out_total, new_list):
 
 def check_sitemap(sitemap, data_sitemap, headers, id_trust):
     loc = sitemap.find('loc').string
-    lastmod = sitemap.find('lastmod')
+    lastmod = sitemap.find('lastmod').string if sitemap.find('lastmod') else None
     if data_sitemap:
         if lastmod and data_sitemap[1]:
-            if data_sitemap[1] != lastmod.string:
-                update_sitemap(loc, lastmod.string)
+            if data_sitemap[1] != lastmod:
+                update_sitemap(loc, lastmod)
             else:
                 return False
     else:
-        insert_sitemap(loc, lastmod.string, headers, id_trust)
+        insert_sitemap(loc, lastmod, headers, id_trust)
     return True
 
