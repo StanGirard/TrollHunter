@@ -9,6 +9,7 @@ class User:
         self.actors_info = []
         self.interactions = []
         self.tweets = []
+        self.actors = set()
 
     def set_user_info(self, user_info):
         self.user_info = user_info
@@ -31,6 +32,7 @@ class User:
         return usrname
 
     def add_actor_info(self, actor):
+        self.actors.add(actor.username)
         self.actors_info.append(actor)
 
     def set_follow(self, follow, follower_id, following_id):
