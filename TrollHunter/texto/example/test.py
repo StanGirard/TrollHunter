@@ -4,6 +4,12 @@ import re
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import OneClassSVM
+from sklearn.cluster import KMeans
+import sys
+from scipy.sparse import csr_matrix, hstack
+
+sys.path.append('../')
+from Sentiment import get_sentiment_from_tweets, get_polarity, get_subjectivity
 
 # https://medium.com/@0xskywalker/analysis-of-russian-troll-farm-using-anomalous-detection-b56dcdafa9d5
 
@@ -19,7 +25,7 @@ def cleantext(text):
 #clean text and reduce to lower case
 data_size = 15000
 processed_tweets = list()
-X_train2 = read_tweets[-data_size:]
+X_train2 = read_tweets[:]
 for sentence in read_tweets:
     try:
         processed_tweets.append(cleantext(sentence).lower())
@@ -30,53 +36,66 @@ for sentence in read_tweets:
 processed_tweets = np.array(processed_tweets)
 
 #create X_train/X_test
-X_train1 = processed_tweets[-data_size:]
-X_train = X_train1
+X_train_data = processed_tweets[:data_size]
 
-X_test = processed_tweets[:data_size]
-print("Trainining Data Size:", X_train.size)
-print("Test Data Size:", X_test.size)
+#X_test = processed_tweets[:data_size]
+print("Trainining Data Size:", X_train_data.size)
+#print("Test Data Size:", X_test.size)
 
 #apply tf-idf
 # récupérér une matrice de d'occurence pondéré de mots par tweet
 vectorizer = TfidfVectorizer(use_idf=True)
-X_train = vectorizer.fit_transform(X_train)
-X_test = vectorizer.transform(X_test)
+X_train = vectorizer.fit_transform(X_train_data)
+
+""" Process subjectivity, polarity, feelings """
+
+setOffeelings = []
+sentiments = get_sentiment_from_tweets(X_train_data).compound.values
+subjectivity = get_subjectivity(X_train_data).subjectivity.values
+polarity = get_polarity(X_train_data).polarity.values
+
+A = csr_matrix(list(map(lambda x: [x], sentiments)), dtype="float")
+B = csr_matrix(list(map(lambda x: [x], subjectivity)), dtype="float")
+C = csr_matrix(list(map(lambda x: [x], polarity)), dtype="float")
+
+matrix = hstack([A, B, C])
+X_train = hstack([X_train, matrix])
+
+""" End Processing """
+
+#print(pd.DataFrame.sparse.from_spmatrix(X_train))
+#X_test = vectorizer.transform(X_test)
 
 model = OneClassSVM(kernel='rbf')
-model.fit(X_train)
+kModel = KMeans(n_clusters=8)
+y_train = kModel.fit_predict(X_train)
+
+#model.fit(X_train)
 #model.fit(X_test)
-y_train = model.predict(X_train)
-y_test = model.predict(X_test)
+#y_train = model.predict(X_train)
+#y_test = model.predict(X_test)
+#print(y_train)
 
 #number of anomalies
-train = y_train[y_train == 1].size
-test = y_test[y_test == 1].size
+#train = y_train[y_train == 1].size
+#test = y_test[y_test == 1].size
 
-indexes1 = list()
-indexes2 = list()
+indexes = {0: list(), 1: list(), 2: list(), 3: list(), 4: list(), 5: list(), 6: list(), 7: list()}
 for i in range(0, y_train.size):
-    if y_train[i] == 1:
-        indexes1.append(i)
-    else:
-        indexes2.append(i)
+    goodList = indexes[y_train[i]]
+    goodList.append(i)
 
-f = open("minus.txt", "w")
-for i in indexes2:
-    f.writelines(str(X_train2[i]).strip())
-    f.writelines("---------------\n")
-f.close()
+for index, goodList in indexes.items():
+    f = open("index"+str(index)+".txt", "w")
+    for i in goodList:
+        f.writelines(str(X_train2[i]).strip())
+        f.writelines("---------------\n")
+    f.close()
 
-f = open("plus.txt", "w")
-for i in indexes1:
-    f.writelines(str(X_train2[i]).strip())
-    f.writelines("---------------\n")
-f.close()
+#print("Size of inliers in Train set:", train)
+#print("Size of inliers in Test set:", test)
 
-print("Size of inliers in Train set:", train)
-print("Size of inliers in Test set:", test)
-
-train_anomaly = y_train[y_train == -1].size
-test_anomaly = y_test[y_test == -1].size
-print("Size of outliers in Train set:", train_anomaly)
-print("Size of outliers in Test set:", test_anomaly)
+#train_anomaly = y_train[y_train == -1].size
+#test_anomaly = y_test[y_test == -1].size
+#print("Size of outliers in Train set:", train_anomaly)
+#print("Size of outliers in Test set:", test_anomaly)

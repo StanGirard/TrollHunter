@@ -1,7 +1,9 @@
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from textblob import TextBlob
 import pandas as pd
+import nltk
 
+nltk.download('vader_lexicon')
 
 def get_sentiment_from_tweets(tweet):
     analyser = SentimentIntensityAnalyzer()
