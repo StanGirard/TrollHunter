@@ -8,6 +8,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name='TrollHunter',
 
+
     version='0.2.9',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
