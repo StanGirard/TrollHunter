@@ -9,7 +9,7 @@ setup(
     name='TrollHunter',
 
 
-    version='0.2.9',
+    version='0.2.10',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
     long_description=long_description,

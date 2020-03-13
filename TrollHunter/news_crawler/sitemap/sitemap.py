@@ -48,10 +48,11 @@ def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
 def parse_sitemap(sitemap, trust_levels, db_sitemaps, es: Elasticsearch, indexEs = "sitemaps", sort = None,  influxdb = False, range_check = 20):
 
     resp = requests.get(sitemap[0])
-
+    new_list = ["Source"] + sitemap[2] + ["Trust level"]
+    panda_out_total = pd.DataFrame([], columns=new_list)
     # we didn't get a valid response, bail
     if (200 != resp.status_code):
-        return False
+        return panda_out_total
 
     # BeautifulSoup to parse the document
     soup = Soup(resp.content, "xml")
@@ -61,11 +62,10 @@ def parse_sitemap(sitemap, trust_levels, db_sitemaps, es: Elasticsearch, indexEs
     if sort and urls:
         urls.sort(key=sort_loc)
     sitemaps = soup.findAll('sitemap')
-    new_list = ["Source"] + sitemap[2] + ["Trust level"]
-    panda_out_total = pd.DataFrame([], columns=new_list)
+    
 
     if not urls and not sitemaps:
-        return False
+        return panda_out_total
 
     sitemap_db = db_sitemaps.get(sitemap[0])
     url_headers = sitemap_db[2] if sitemap_db and sitemap_db[2] else sitemap[2]
@@ -127,7 +127,7 @@ def build_panda_out(out, panda_out_total, new_list):
 
 
 def check_sitemap(sitemap, data_sitemap, headers, id_trust):
-    loc = sitemap.find('loc').string
+    loc = sitemap.find('loc').string.strip("\n")
     lastmod = sitemap.find('lastmod').string if sitemap.find('lastmod') else None
     if data_sitemap:
         if lastmod and data_sitemap[1]:
