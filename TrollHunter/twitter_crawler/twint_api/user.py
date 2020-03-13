@@ -12,11 +12,6 @@ class User:
 
     def set_user_info(self, user_info):
         self.user_info = user_info
-        self.user_info.crawled = "false"
-
-    def set_user_crawled(self):
-        self.user_info.crawled = "true"
-        self.user_info.crawled_time = datetime.now()
 
     def set_tweets(self, tweet):
         self.tweets = tweet
@@ -55,3 +50,10 @@ class Interaction:
         self.interaction = interaction
         self.twittos_b = str(twittos_b)
         self.source = str(source)
+
+
+class Crawled:
+    def __init__(self, user):
+        self.id = user.id
+        self.username = user.username
+        self.crawled_time = datetime.now()

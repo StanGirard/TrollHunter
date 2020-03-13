@@ -1,9 +1,28 @@
 from elasticsearch import Elasticsearch, helpers
+from datetime import datetime
+
+TWEET = 'twitter_tweet'
+USER = 'twitter_user'
+INTERACTION = 'twitter_interaction'
+CRAWLED = 'twitter_crawled'
 
 
 class Elastic:
     def __init__(self, host="142.93.170.234", port=9200, user="elastic", password="changeme"):
         self.es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password))
+
+    def is_crawled(self, id):
+        filtered_num = \
+        res = self.es.count(index=CRAWLED, body={"query": {"bool": {"must": {"match": {"id": str(id)}}}}})["count"]
+        return res > 0
+
+    def store_crawled(self, crawled):
+        self.store_crawleds([crawled])
+
+    def store_crawleds(self, crawleds):
+        self.create_index_crawled()
+        print("Store ", len(crawleds), " crawled(s)")
+        print(helpers.bulk(self.es, self.doc_from_dict(crawleds, CRAWLED)))
 
     def store_user(self, user):
         self.store_users([user])
@@ -11,19 +30,19 @@ class Elastic:
     def store_users(self, users):
         self.create_index_user()
         print("Store ", len(users), " user(s)")
-        print(helpers.bulk(self.es, self.doc_from_dict(users, "twitter_user")))
+        print(helpers.bulk(self.es, self.doc_from_dict(users, USER)))
 
     def store_tweets(self, tweets):
         self.create_index_tweet()
         print("Store ", len(tweets), " tweet(s)")
-        print(helpers.bulk(self.es, self.doc_from_dict(tweets, "twitter_tweet")))
+        print(helpers.bulk(self.es, self.doc_from_dict(tweets, TWEET)))
 
     def store_interactions(self, interactions):
         if interactions is None:
             return
         self.create_index_interaction()
         print("Store ", len(interactions), " interaction(s)")
-        print(helpers.bulk(self.es, self.doc_from_dict(interactions, "twitter_interaction")))
+        print(helpers.bulk(self.es, self.doc_from_dict(interactions, INTERACTION)))
 
     @staticmethod
     def filter_keys(document, headers):
@@ -64,15 +83,13 @@ class Elastic:
                     "background_image": {"type": "text"},
                     "session": {"type": "keyword"},
                     "geo_user": {"type": "geo_point"},
-                    "crawled": {"type": "boolean", "null_value": False},
-                    "crawled_time": {"type": "date"},
                 }
             },
             "settings": {
                 "number_of_shards": 1
             }
         }
-        self.es.indices.create(index="twitter_user", body=user_body, ignore=400)
+        self.es.indices.create(index=USER, body=user_body, ignore=400)
 
     def create_index_tweet(self):
         tweets_body = {
@@ -155,5 +172,20 @@ class Elastic:
                 "number_of_shards": 1
             }
         }
-        self.es.indices.create(index="twitter_interaction", body=interaction_body, ignore=400)
+        self.es.indices.create(index=INTERACTION, body=interaction_body, ignore=400)
+
+    def create_index_crawled(self):
+        interaction_body = {
+            "mappings": {
+                "properties": {
+                    "id": {"type": "keyword"},
+                    "username": {"type": "keyword"},
+                    "crawled_time": {"type": "date"},
+                }
+            },
+            "settings": {
+                "number_of_shards": 1
+            }
+        }
+        self.es.indices.create(index=CRAWLED, body=interaction_body, ignore=400)
 

@@ -3,7 +3,7 @@ import pandas as pd
 
 from TrollHunter.twitter_crawler import crawler
 from TrollHunter.twitter_crawler.celeryapp import app
-from TrollHunter.twitter_crawler.twint_api.user import User
+from TrollHunter.twitter_crawler.twint_api.user import User, Crawled
 from TrollHunter.twitter_crawler.twint_api.tweetobj import TweetObj
 from TrollHunter.twitter_crawler.twint_api.elastic import Elastic
 from TrollHunter.twitter_crawler.twint import twint
@@ -32,9 +32,9 @@ def get_info_from_user(username, args):
     user = User(username)
 
     get_info_user(user, args)
-    user.set_user_crawled()
-
+    elastic.store_crawled(user.user_info)
     elastic.store_user(user.user_info)
+
     get_user_interaction(args, user)
 
 
