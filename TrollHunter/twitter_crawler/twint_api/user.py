@@ -32,6 +32,8 @@ class User:
         return usrname
 
     def add_actor_info(self, actor):
+        if actor.username in self.actors:
+            return
         self.actors.add(actor.username)
         self.actors_info.append(actor)
 
