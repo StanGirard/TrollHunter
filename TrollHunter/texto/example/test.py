@@ -10,6 +10,7 @@ from scipy.sparse import csr_matrix, hstack
 
 sys.path.append('../')
 from Sentiment import get_sentiment_from_tweets, get_polarity, get_subjectivity
+from Keyword import lemetize_text
 
 # https://medium.com/@0xskywalker/analysis-of-russian-troll-farm-using-anomalous-detection-b56dcdafa9d5
 
@@ -28,7 +29,7 @@ processed_tweets = list()
 X_train2 = read_tweets[:]
 for sentence in read_tweets:
     try:
-        processed_tweets.append(cleantext(sentence).lower())
+        processed_tweets.append(lemetize_text(cleantext(sentence).lower()))
     except:
         continue
 
@@ -46,6 +47,7 @@ print("Trainining Data Size:", X_train_data.size)
 # récupérér une matrice de d'occurence pondéré de mots par tweet
 vectorizer = TfidfVectorizer(use_idf=True)
 X_train = vectorizer.fit_transform(X_train_data)
+#print(vectorizer.get_feature_names())
 
 """ Process subjectivity, polarity, feelings """
 
@@ -67,7 +69,8 @@ X_train = hstack([X_train, matrix])
 #X_test = vectorizer.transform(X_test)
 
 model = OneClassSVM(kernel='rbf')
-kModel = KMeans(n_clusters=8)
+nbIndexes = 2
+kModel = KMeans(n_clusters=nbIndexes)
 y_train = kModel.fit_predict(X_train)
 
 #model.fit(X_train)
@@ -80,7 +83,10 @@ y_train = kModel.fit_predict(X_train)
 #train = y_train[y_train == 1].size
 #test = y_test[y_test == 1].size
 
-indexes = {0: list(), 1: list(), 2: list(), 3: list(), 4: list(), 5: list(), 6: list(), 7: list()}
+indexes = {}
+for i in range(0, nbIndexes):
+    indexes[i] = list()
+
 for i in range(0, y_train.size):
     goodList = indexes[y_train[i]]
     goodList.append(i)
