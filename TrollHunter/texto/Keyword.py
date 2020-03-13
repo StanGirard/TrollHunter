@@ -6,8 +6,6 @@ from nltk import word_tokenize
 import string
 from nltk.stem import WordNetLemmatizer
 
-test = True
-
 # download/update POS tag list and tag each token
 nltk.download('averaged_perceptron_tagger')
 # download/update lemmatizer english set
@@ -25,6 +23,12 @@ def clean(text):
     text = filter(lambda x: x in printable, text)
     text = "".join(list(text))
     return text
+
+
+def lemetize_text(text: str) -> str:
+    text = word_tokenize(text)
+    POS_tag = nltk.pos_tag(text)
+    return " ".join(lemetize(POS_tag))
 
 
 def lemetize(POS_tag):
@@ -65,10 +69,7 @@ def extract_v1(txt: str, lim: int = 25) -> set:
     res = []
 
     for phrase in ranked_phrases:
-        text = word_tokenize(phrase)
-        POS_tag = nltk.pos_tag(text)
-
-        res.append(" ".join(lemetize(POS_tag), ))
+        res.append(lemetize_text(phrase))
 
     return set(res[:(lim if len(res) >= lim else len(res))])
 
@@ -258,7 +259,7 @@ def extract_v2(txt: str, lim: int = 50) -> set:
     return set(res)
 
 
-if test:
+if __name__ == '__main__':
     file = open("text_example.txt", "r")
     text = file.read()
     print(extract(text))
