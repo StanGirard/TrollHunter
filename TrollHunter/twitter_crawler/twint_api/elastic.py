@@ -9,16 +9,19 @@ class Elastic:
         self.store_users([user])
 
     def store_users(self, users):
+        self.create_index_user()
         print("Store ", len(users), " user(s)")
         print(helpers.bulk(self.es, self.doc_from_dict(users, "twitter_user")))
 
     def store_tweets(self, tweets):
+        self.create_index_tweet()
         print("Store ", len(tweets), " tweet(s)")
         print(helpers.bulk(self.es, self.doc_from_dict(tweets, "twitter_tweet")))
 
     def store_interactions(self, interactions):
         if interactions is None:
             return
+        self.create_index_interaction()
         print("Store ", len(interactions), " interaction(s)")
         print(helpers.bulk(self.es, self.doc_from_dict(interactions, "twitter_interaction")))
 
@@ -38,3 +41,119 @@ class Elastic:
                 }
             except StopIteration:
                 return
+
+    def create_index_user(self):
+        user_body = {
+            "mappings": {
+                "properties": {
+                    "id": {"type": "keyword"},
+                    "name": {"type": "keyword"},
+                    "username": {"type": "keyword"},
+                    "bio": {"type": "text"},
+                    "location": {"type": "keyword"},
+                    "url": {"type": "text"},
+                    "join_datetime": {"type": "date", "format": "yyyy-MM-dd HH:mm:ss"},
+                    "tweets": {"type": "integer"},
+                    "following": {"type": "integer"},
+                    "followers": {"type": "integer"},
+                    "likes": {"type": "integer"},
+                    "media": {"type": "integer"},
+                    "private": {"type": "integer"},
+                    "verified": {"type": "integer"},
+                    "avatar": {"type": "text"},
+                    "background_image": {"type": "text"},
+                    "session": {"type": "keyword"},
+                    "geo_user": {"type": "geo_point"},
+                    "crawled": {"type": "boolean", "null_value": False},
+                    "crawled_time": {"type": "date"},
+                }
+            },
+            "settings": {
+                "number_of_shards": 1
+            }
+        }
+        self.es.indices.create(index="twitter_user", body=user_body, ignore=400)
+
+    def create_index_tweet(self):
+        tweets_body = {
+            "mappings": {
+                "properties": {
+                    "id": {"type": "long"},
+                    "conversation_id": {"type": "long"},
+                    "created_at": {"type": "long"},
+                    "date": {"type": "date", "format": "yyyy-MM-dd HH:mm:ss"},
+                    "timezone": {"type": "keyword"},
+                    "place": {"type": "keyword"},
+                    "location": {"type": "keyword"},
+                    "tweet": {"type": "text"},
+                    "hashtags": {"type": "keyword", "normalizer": "hashtag_normalizer"},
+                    "cashtags": {"type": "keyword", "normalizer": "hashtag_normalizer"},
+                    "user_id_str": {"type": "keyword"},
+                    "username": {"type": "keyword", "normalizer": "hashtag_normalizer"},
+                    "name": {"type": "text"},
+                    "profile_image_url": {"type": "text"},
+                    "day": {"type": "integer"},
+                    "hour": {"type": "integer"},
+                    "link": {"type": "text"},
+                    "retweet": {"type": "text"},
+                    "essid": {"type": "keyword"},
+                    "nlikes": {"type": "integer"},
+                    "nreplies": {"type": "integer"},
+                    "nretweets": {"type": "integer"},
+                    "quote_url": {"type": "text"},
+                    "video": {"type": "integer"},
+                    "search": {"type": "text"},
+                    "near": {"type": "text"},
+                    "geo_near": {"type": "geo_point"},
+                    "geo_tweet": {"type": "geo_point"},
+                    "photos": {"type": "text"},
+                    "user_rt_id": {"type": "keyword"},
+                    "mentions": {"type": "keyword", "normalizer": "hashtag_normalizer"},
+                    "source": {"type": "keyword"},
+                    "user_rt": {"type": "keyword"},
+                    "retweet_id": {"type": "keyword"},
+                    "reply_to": {
+                        "type": "nested",
+                        "properties": {
+                            "user_id": {"type": "keyword"},
+                            "username": {"type": "keyword"}
+                        }
+                    },
+                    "retweet_date": {"type": "keyword"},
+                    "urls": {"type": "keyword"},
+                    "translate": {"type": "text"},
+                    "trans_src": {"type": "keyword"},
+                    "trans_dest": {"type": "keyword"},
+                }
+            },
+            "settings": {
+                "number_of_shards": 1,
+                "analysis": {
+                    "normalizer": {
+                        "hashtag_normalizer": {
+                            "type": "custom",
+                            "char_filter": [],
+                            "filter": ["lowercase", "asciifolding"]
+                        }
+                    }
+                }
+            }
+        }
+        self.es.indices.create(index="twitter_tweet", body=tweets_body, ignore=400)
+
+    def create_index_interaction(self):
+        interaction_body = {
+            "mappings": {
+                "properties": {
+                    "twittos_a": {"type": "keyword"},
+                    "interaction": {"type": "keyword"},
+                    "twittos_b": {"type": "keyword"},
+                    "source": {"type": "keyword"}
+                }
+            },
+            "settings": {
+                "number_of_shards": 1
+            }
+        }
+        self.es.indices.create(index="twitter_interaction", body=interaction_body, ignore=400)
+

@@ -32,8 +32,10 @@ def get_info_from_user(username, args):
     user = User(username)
 
     get_info_user(user, args)
+    user.set_user_crawled()
+
     elastic.store_user(user.user_info)
-    get_user_interaction(args,user)
+    get_user_interaction(args, user)
 
 
 def get_user_interaction(args,user):
@@ -47,10 +49,10 @@ def get_user_interaction(args,user):
     if "follow" not in args or int(args["follow"]) == 1:
         get_follower_user(user, args)
         get_following_user(user, args)
-        elastic.store_users(user.actors_info)
 
-        if "depth" in args and int(args["depth"]) == 1:
-            crawler.crawl.delay(user.actors_info, args)
+    elastic.store_users(user.actors_info)
+    if "depth" in args and int(args["depth"]) == 1:
+        crawler.crawl.delay(user.actors_info, args)
 
     elastic.store_interactions(user.interactions)
     return "user"

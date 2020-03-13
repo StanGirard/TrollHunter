@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class User:
     def __init__(self, username):
         self.username = username
@@ -9,6 +12,11 @@ class User:
 
     def set_user_info(self, user_info):
         self.user_info = user_info
+        self.user_info.crawled = "false"
+
+    def set_user_crawled(self):
+        self.user_info.crawled = "true"
+        self.user_info.crawled_time = datetime.now()
 
     def set_tweets(self, tweet):
         self.tweets = tweet
