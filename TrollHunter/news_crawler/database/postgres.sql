@@ -21,3 +21,12 @@ CREATE TABLE public.sitemap
 INSERT INTO trust_level values (1, 'Unverified');
 INSERT INTO trust_level values (2, 'Malicious');
 INSERT INTO trust_level values (3, 'Oriented');
+INSERT INTO trust_level values (4, 'Verified');
+
+INSERT INTO sitemap VALUES ('https://www.theguardian.com/sitemaps/news.xml', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 4);
+INSERT INTO sitemap VALUES ('https://www.washingtonpost.com/news-sitemaps/index.xml', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 4);
+INSERT INTO sitemap VALUES ('https://www.nytimes.com/sitemaps/new/news.xml.gz', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 4);
+INSERT INTO sitemap VALUES ('https://www.foxnews.com/sitemap.xml?type=news', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 3);
+INSERT INTO sitemap VALUES ('https://sputniknews.com/sitemap.xml', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 3);
+INSERT INTO sitemap VALUES ('https://time.com/news-sitemap.xml', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 4);
+INSERT INTO sitemap VALUES ('https://www.theonion.com/sitemap_news.xml', NULL, ARRAY['loc', 'lastmod', 'news:title', 'news:publication_date','news:keywords'], 5);
