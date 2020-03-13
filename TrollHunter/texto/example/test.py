@@ -29,7 +29,7 @@ processed_tweets = list()
 X_train2 = read_tweets[:]
 for sentence in read_tweets:
     try:
-        processed_tweets.append(lemetize_text(cleantext(sentence).lower()))
+        processed_tweets.append(cleantext(sentence).lower())
     except:
         continue
 
@@ -43,27 +43,30 @@ X_train_data = processed_tweets[:data_size]
 print("Trainining Data Size:", X_train_data.size)
 #print("Test Data Size:", X_test.size)
 
-#apply tf-idf
-# récupérér une matrice de d'occurence pondéré de mots par tweet
-vectorizer = TfidfVectorizer(use_idf=True)
-X_train = vectorizer.fit_transform(X_train_data)
-#print(vectorizer.get_feature_names())
-
 """ Process subjectivity, polarity, feelings """
 
+X_train_data_lem = list(map(lambda x: lemetize_text(x), X_train_data))
+
 setOffeelings = []
-sentiments = get_sentiment_from_tweets(X_train_data).compound.values
-subjectivity = get_subjectivity(X_train_data).subjectivity.values
-polarity = get_polarity(X_train_data).polarity.values
+sentiments = get_sentiment_from_tweets(X_train_data_lem).compound.values
+subjectivity = get_subjectivity(X_train_data_lem).subjectivity.values
+polarity = get_polarity(X_train_data_lem).polarity.values
 
 A = csr_matrix(list(map(lambda x: [x], sentiments)), dtype="float")
 B = csr_matrix(list(map(lambda x: [x], subjectivity)), dtype="float")
 C = csr_matrix(list(map(lambda x: [x], polarity)), dtype="float")
 
 matrix = hstack([A, B, C])
-X_train = hstack([X_train, matrix])
 
 """ End Processing """
+
+#apply tf-idf
+# récupérér une matrice de d'occurence pondéré de mots par tweet
+vectorizer = TfidfVectorizer(use_idf=True)
+X_train = vectorizer.fit_transform(X_train_data)
+#print(vectorizer.get_feature_names())
+
+X_train = hstack([X_train, matrix])
 
 #print(pd.DataFrame.sparse.from_spmatrix(X_train))
 #X_test = vectorizer.transform(X_test)
