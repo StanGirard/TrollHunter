@@ -11,9 +11,8 @@ class Elastic:
     def __init__(self, host="142.93.170.234", port=9200, user="elastic", password="changeme"):
         self.es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password))
 
-    def is_crawled(self, id):
-        filtered_num = \
-        res = self.es.count(index=CRAWLED, body={"query": {"bool": {"must": {"match": {"id": str(id)}}}}})["count"]
+    def is_crawled(self, username):
+        res = self.es.count(index=CRAWLED, body={"query": {"bool": {"must": {"match": {"username": str(username)}}}}})["count"]
         return res > 0
 
     def store_crawled(self, crawled):
