@@ -12,8 +12,8 @@ def news_crawler():
 
 def scheduler_news():
     print('Start crawler/indexer sitemap')
-    start = time.time()
     while True:
+        start = time.time()
         try:
             news_crawler()
         except Exception as error:
