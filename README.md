@@ -18,5 +18,9 @@ Added Python Package building
 
 Crawler and indexer
 
+## TODO
+
+- [ ] Make a better doc 
+
 
 
