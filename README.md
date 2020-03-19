@@ -21,6 +21,7 @@ Crawler and indexer
 ## TODO
 
 - [ ] Make a better doc 
+- [ ] Start the doc
 
 
 
