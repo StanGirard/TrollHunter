@@ -1,6 +1,6 @@
 import datetime
 import pandas as pd
-
+import json
 from TrollHunter.twitter_crawler import crawler
 from TrollHunter.twitter_crawler.celeryapp import app
 from TrollHunter.twitter_crawler.twint_api.user import User, Crawled
@@ -51,8 +51,8 @@ def get_user_interaction(args,user):
         get_following_user(user, args)
 
     elastic.store_users(user.actors_info)
-    if "depth" in args and int(args["depth"]) == 1:
-        crawler.crawl.delay(user.actors_info, args)
+    if "depth" in args and int(args["depth"]) > 0:
+        crawler.crawl.delay(json.dumps(list(user.actors)), args)
 
     elastic.store_interactions(user.interactions)
     return "user"
@@ -119,6 +119,7 @@ def get_info_user(user, args):
 
 def get_tweet_from_user(user, args):
     config = get_twint_config(args, user=user)
+
     config.Profile = True
     config.Profile_full = True
     twint.output.tweets_list.clear()
