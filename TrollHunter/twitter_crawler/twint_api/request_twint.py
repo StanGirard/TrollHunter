@@ -16,7 +16,7 @@ args:
     tweet:          set to 0 to avoid tweet (default: 1)
     follow:         set to 0 to avoid follow (default: 1)
     limit:          set the number of tweet to retrieve (Increments of 20, default: 100)
-    follow_limit:   set the number of following and followers to retrieve (-1 to avoid)
+    follow_limit:   set the number of following and followers to retrieve (default: 100)
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
@@ -101,7 +101,7 @@ def init_follow_retrieval(user, args):
     if "follow_limit" in args and int(args["follow_limit"]) > -1:
         config.Limit = int(args["follow_limit"])
     else:
-        config.Limit = user.user_info.followers
+        config.Limit = 100
     twint.output.follows_list = []
     return config
 
