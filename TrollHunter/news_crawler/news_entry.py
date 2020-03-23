@@ -29,7 +29,7 @@ def scheduler_keywords():
     while True:
         start = time.time()
         try:
-            define_keywords_article(100)
+            define_keywords_article(100, influx_db=True)
         except Exception as error:
             print(error)
         print('Extract Keywords Sleep')
