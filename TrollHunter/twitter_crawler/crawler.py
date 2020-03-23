@@ -1,29 +1,24 @@
-from flask import Flask, request
+import getopt
+import sys
+import json
 
+from TrollHunter.twitter_crawler.celeryapp import app
+from TrollHunter.twitter_crawler.twint import twint
+from TrollHunter.twitter_crawler.twint_api.elastic import Elastic
 from TrollHunter.twitter_crawler.twint_api import request_twint
 
-app = Flask(__name__)
+es = Elastic()
+@app.task
+def crawl(list_user,args):
+    args_copy = args.copy()
 
+    list_user = json.loads(list_user)
+    if "depth" in args_copy.keys():
+        args_copy["depth"] = int(args_copy["depth"]) - 1
+    for user in list_user:
+        if not es.is_crawled(user):
+            request_twint.get_info_from_user.delay(user,args_copy)
 
+    # elastic.is_crawled
+    # list_tweet = crawl_tweet(args)
 
-@app.route('/tweets/<string:user>', methods=['GET'])
-def user_tweet(user):
-    request_twint.get_info_from_user.delay(user, request.args)
-    return "200"
-
-
-@app.route('/tweets/', methods=['GET'])
-def search_tweet():
-    return request_twint.get_tweet_from_search.delay(request.args)
-
-
-@app.route('/tweets/origin/', methods=['GET'])
-def origin_tweet():
-        return request_twint.get_origin_tweet.delay(request.args)
-
-
-def run():
-    app.run()
-
-if __name__ == '__main__':
-    run()
