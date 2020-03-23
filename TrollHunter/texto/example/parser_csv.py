@@ -1,6 +1,7 @@
 import pandas as pd
 from polyglot.detect import Detector
 
+
 def get_user_data(user_file):
     df_csv = pd.read_csv(user_file)
 
@@ -23,6 +24,7 @@ def find_tweets_from_user(df_tweets, id_user) -> pd.DataFrame:
 
     return result
 
+
 if __name__ == '__main__':
     p = get_tweet_data("./tweets.csv")
     users = pd.read_csv("./users.csv")
@@ -33,7 +35,7 @@ if __name__ == '__main__':
     for id in users['id'].values:
         try:
             intId = int(id)
-            file = begPath+"user_"+str(intId)+".csv"
+            file = begPath + "user_" + str(intId) + ".csv"
             t = find_tweets_from_user(p, intId)
             t = t.sort_values(by="created_at", ascending=True)
             textValues = t['text'].values
