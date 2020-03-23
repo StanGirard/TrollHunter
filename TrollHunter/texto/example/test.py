@@ -14,9 +14,9 @@ from Keyword import lemetize_text
 
 # https://medium.com/@0xskywalker/analysis-of-russian-troll-farm-using-anomalous-detection-b56dcdafa9d5
 
-data = "tweets.csv"
+data = "new_tweets"
 read_data = pd.read_csv(data)
-read_tweets = read_data['text'].values
+read_tweets = read_data['0'].values
 
 #remove bad chars
 def cleantext(text):
@@ -62,19 +62,21 @@ matrix = hstack([A, B, C])
 
 #apply tf-idf
 # récupérér une matrice de d'occurence pondéré de mots par tweet
-vectorizer = TfidfVectorizer(use_idf=True)
+vectorizer = TfidfVectorizer(use_idf=True, stop_words="english")
 X_train = vectorizer.fit_transform(X_train_data)
 #print(vectorizer.get_feature_names())
 
-X_train = hstack([X_train, matrix])
+#X_train = hstack([X_train, matrix])
 
 #print(pd.DataFrame.sparse.from_spmatrix(X_train))
 #X_test = vectorizer.transform(X_test)
 
-model = OneClassSVM(kernel='rbf')
-nbIndexes = 2
+#model = OneClassSVM(kernel='rbf')
+nbIndexes = 3
 kModel = KMeans(n_clusters=nbIndexes)
-y_train = kModel.fit_predict(X_train)
+kModel.fit(X_train)
+y_train = kModel.predict(X_train)
+print(y_train)
 
 #model.fit(X_train)
 #model.fit(X_test)

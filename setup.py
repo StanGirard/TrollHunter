@@ -88,7 +88,8 @@ setup(
         "yarl==1.4.2",
         "zipp==3.1.0",
         "nltk==3.4.5",
-        "rake-nltk==1.0.4"
+        "rake-nltk==1.0.4",
+        "polyglot-16.7.4"
     ]
 
 )
