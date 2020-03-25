@@ -1,5 +1,6 @@
 from flask import Flask, request
 
+from TrollHunter.twitter_crawler import crawler
 from TrollHunter.twitter_crawler.twint_api import request_twint
 
 app = Flask(__name__)
@@ -14,7 +15,8 @@ def user_tweet(user):
 
 @app.route('/tweets/', methods=['GET'])
 def search_tweet():
-    request_twint.get_tweet_from_search.delay(request.args)
+    crawler.crawl_from_search.delay(request.args)
+    # request_twint.get_tweet_from_search.delay(request.args)
     return "200"
 
 

@@ -10,6 +10,7 @@ from TrollHunter.twitter_crawler.twint_api.elastic import Elastic
 from TrollHunter.twitter_crawler.twint_api import request_twint
 
 es = Elastic()
+
 @app.task
 
 def crawl(list_user,args):
@@ -22,7 +23,7 @@ def crawl(list_user,args):
         if not es.is_crawled(user):
             request_twint.get_info_from_user.delay(user,args_copy)
 
-
+@app.task
 def crawl_from_search (args):
     signal.signal(signal.SIGINT, exit_)
     signal.signal(signal.SIGTERM, exit_)
@@ -49,7 +50,7 @@ def exit_():
 if __name__ == '__main__':
     args = {}
     args["search"] = "(#Covid-19)"
-    args["limit"] = 100
+    args["limit"] = 1000
     args["follow_limit"] = 10
     args["tweet_interact"] = 1
     args["tweet"] = 0
