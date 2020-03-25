@@ -23,16 +23,11 @@ def crawl(list_user,args):
             request_twint.get_info_from_user.delay(user,args_copy)
 
 
-def crawl_from_search (search):
+def crawl_from_search (args):
     signal.signal(signal.SIGINT, exit_)
     signal.signal(signal.SIGTERM, exit_)
     now = date.today()
-    args={}
-    args["search"] = search
-    args["limit"] = 10
-    args["follow_limit"] = 2
-    args["tweet_interact"] = 1
-    args["tweet"] = 0
+
     print('Start crawler twitter')
     while True:
         start = time.time()
@@ -52,4 +47,10 @@ def exit_():
 
 
 if __name__ == '__main__':
-    crawl_from_search("(#Covid-19)")
+    args = {}
+    args["search"] = "(#Covid-19)"
+    args["limit"] = 100
+    args["follow_limit"] = 10
+    args["tweet_interact"] = 1
+    args["tweet"] = 0
+    crawl_from_search(args)
