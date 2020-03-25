@@ -11,6 +11,11 @@ def news_crawler():
 
 
 def scheduler_news():
+    """
+    Entry point for crawling sitemaps and indexing news in ElasticSearch.
+    Every two hours, sitemaps are crawled to index the new articles.
+
+    """
     print('Start crawler/indexer sitemap')
     while True:
         start = time.time()
@@ -25,6 +30,11 @@ def scheduler_news():
 
 
 def scheduler_keywords():
+    """
+    Entry point for extracting and updating in ElasticSearch the news entries without keywords.
+    Every hour, maximum 100 news entries are updated.
+
+    """
     print('Start extract keywords')
     while True:
         start = time.time()
