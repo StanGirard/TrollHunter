@@ -19,6 +19,7 @@ def get_null_keywords_es(es, size):
 def if_influx_url(influxdb, url):
     """
     Emit event in InfluxDb for monitoring, if set.
+    Monitoring event: Update Keyword in ES
 
     :param influxdb: true for monitoring, false otherwise
     :param url: news'url linked to the event
