@@ -20,7 +20,7 @@ args:
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
-    search:         search terms
+    search:         search terms format for hastag : (#hashtag)
     tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
     depth:          search tweet and info from list of follow
     

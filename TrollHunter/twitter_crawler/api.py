@@ -8,13 +8,14 @@ app = Flask(__name__)
 
 @app.route('/tweets/<string:user>', methods=['GET'])
 def user_tweet(user):
-    request_twint.get_info_from_user.delay(user, request.args)
+    request_twint.get_info_from_user(user, request.args)
     return "200"
 
 
 @app.route('/tweets/', methods=['GET'])
 def search_tweet():
-    return request_twint.get_tweet_from_search.delay(request.args)
+    request_twint.get_tweet_from_search.delay(request.args)
+    return "200"
 
 
 @app.route('/tweets/origin/', methods=['GET'])
