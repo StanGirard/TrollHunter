@@ -2,6 +2,9 @@ import pandas as pd
 import time
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Check for empty values
 
@@ -44,7 +47,7 @@ def doc_generator(df, headers):
             return
 
 
-def elastic_sitemap(sitemap, trust_levels, db_sitemap, host = "142.93.170.234", port = 9200, user = "elastic", password = "changeme", sort = None, influxdb = False):
+def elastic_sitemap(sitemap, trust_levels, db_sitemap, host = str(os.getenv("ELASTIC_SERVER")), port = os.getenv("ELASTIC_PORT"), user = os.getenv("ELASTIC_USER"), password = os.getenv("ELASTIC_PASSWORD"), sort = None, influxdb = False):
     """
     Parse a sitemap tree and aggregate the news in a dataframe.
     Then insert them in an index pattern in ElasticSearch.
@@ -59,6 +62,7 @@ def elastic_sitemap(sitemap, trust_levels, db_sitemap, host = "142.93.170.234", 
     :param sort: column to sort the urls
     :param influxdb: true to emit event, false otherwise
     """
+    
     es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password) )
     dataframe = parse_sitemap(sitemap, trust_levels, db_sitemap, es, indexEs = "sitemaps", sort = sort, influxdb = influxdb, range_check=20)
     print(dataframe)
