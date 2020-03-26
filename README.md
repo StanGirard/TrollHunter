@@ -70,14 +70,14 @@ For the crawler/indexer:
 ```python
 from TrollHunter.news_crawler import scheduler_news
 
-scheduler_news()
+scheduler_news(time_interval)
 ```
 
 For updating keywords:
 ```python
 from TrollHunter.news_crawler import scheduler_keywords
 
-scheduler_keywords()
+scheduler_keywords(time_interval, max_entry)
 ```
 
 Or see with the [main](https://github.com/StanGirard/TrollHunter/tree/master/docker/news_crawler) use with docker.  

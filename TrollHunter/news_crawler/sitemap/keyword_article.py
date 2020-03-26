@@ -72,7 +72,11 @@ def define_keywords_article(size=100, host=os.getenv("ELASTIC_SERVER"), port=os.
     """
     es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password))
     for hit in get_null_keywords_es(es, size):
-        hit = set_keywords(hit)
+        try:
+            hit = set_keywords(hit)
+        except Exception as error:
+            print(error)
+            continue
         if_influx_url(influx_db, hit['_id'])
         update_keyword_es(es, hit)
 
