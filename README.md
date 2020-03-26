@@ -1,6 +1,40 @@
 # TrollHunter
 
-Added Python Package building
+TrollHunter is a Twitter Crawler & News Website Indexer.
+It aims at finding Troll Farmers & Fake News on Twitter.
+ 
+It composed of three parts:
+- Twint API to extract information about a tweet or a user
+- News Indexer which indexes all the articles of a website and extract its keywords
+
+## Installation
+
+### Docker
+
+TrollHunter requires many services to run
+- ELK ( Elastic Search, Logstash, Kibana)
+- InfluxDb & Grafana
+- RabbitMQ
+
+You can either launch them individually if you already have them setup or use our `docker-compose.yml`
+
+- Install Docker
+- Run `docker-compose up -d`
+
+Change the `.env` with the required values
+
+
+
+
+You can either run
+```Bash
+pip3 install TrollHunter
+```
+or clone the project and run 
+```Bash
+pip3 install -r requirements.txt
+```
+
 
 ## Workflow
 
