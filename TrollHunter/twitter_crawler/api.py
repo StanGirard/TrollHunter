@@ -40,6 +40,7 @@ def search_tweet():
     now = date.today()
     args = request.args
     print('Start crawler twitter')
+    # sleep 2 hours and crawl tweet since 2hour
     while not stop:
         start = time.time()
         try:

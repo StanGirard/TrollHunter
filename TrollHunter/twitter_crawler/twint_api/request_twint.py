@@ -165,7 +165,7 @@ def get_origin_tweet(args):
 
     return format_tweet_to_html(res, "ORIGIN")
 
-
+# Config for research twint
 def get_twint_config(args, user=None):
     config = twint.Config()
     config.Hide_output = HIDE_TWEET_OUPUT
