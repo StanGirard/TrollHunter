@@ -66,8 +66,8 @@ def crawl(args,stop):
             time.sleep(7200 - sleep)
     print("Stop crawl")
 
-def run():
-    app.run()
+def run(port=6000):
+    app.run(port=port)
 
 if __name__ == '__main__':
     run()
