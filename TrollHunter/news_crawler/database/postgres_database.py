@@ -1,8 +1,10 @@
 import psycopg2
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 def connect_db():
-    conn = psycopg2.connect(host='142.93.170.234', database='sitemap', user='trollhunter', password='trollhunter')
+    conn = psycopg2.connect(host=os.getenv("SQL_SERVER"), database=os.getenv("SQL_DATABASE"), user=os.getenv("SQL_USER"), password=os.getenv("SQL_PASSWORD"))
     return conn
 
 
