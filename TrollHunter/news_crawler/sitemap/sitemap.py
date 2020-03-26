@@ -45,7 +45,7 @@ def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
     Then store the missing urls in a new list.
 
     :param es: ElasticSearch connection
-    :param rangeOut: start index of the subset
+    :param rangeOut: start index from the end of the subset
     :param out: list to filter
     :param indexEs:
     :return: list of urls to insert in ElasticSearch
@@ -54,7 +54,8 @@ def reverse_check_exists(es: Elasticsearch, rangeOut: int, out, indexEs):
     ranges = rangeOut
 
     lenOut = len(out)
-    out_cleaned.append(out[:(lenOut-1-ranges)])
+    if lenOut > rangeOut:
+        out_cleaned += out[:(lenOut-ranges)]
     if lenOut > 0:
         if (rangeOut > lenOut ):
             ranges = lenOut
@@ -150,8 +151,8 @@ def parse_sitemap(sitemap, trust_levels, db_sitemaps, es: Elasticsearch, indexEs
             out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
             return build_panda_out(out_cleaned, panda_out_total, new_list)
         count += 1
-    if len(out) < range_check:
-        out_cleaned = reverse_check_exists(es, range_check, out, indexEs)
+    if count < range_check:
+        out_cleaned = reverse_check_exists(es, count, out, indexEs)
         return build_panda_out(out_cleaned, panda_out_total, new_list)
     else:
         return build_panda_out(out, panda_out_total, new_list)
