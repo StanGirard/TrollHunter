@@ -23,6 +23,10 @@ You can either launch them individually if you already have them setup or use ou
 - Run `docker-compose up -d`
 
 Change the `.env` with the required values
+Export the `.env` variables
+```Bash
+export $(cat .env | sed 's/#.*//g' | xargs)
+```
 
 You can either run
 ```Bash
