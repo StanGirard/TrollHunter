@@ -149,8 +149,8 @@ services:
       - elk
     depends_on:
       - elasticsearch
+
   rabbitmq:
-    
     image: 'rabbitmq:3.8.2-management'
     ports:
       # The standard AMQP protocol port
@@ -165,6 +165,34 @@ services:
       context: docker/news_crawler/
     networks:
       - elk
+
+  twitter_crawler_api:
+    build:
+      context: docker/twitter_crawler_api
+    ports:
+      - '6000:6000'
+    expose:
+      - 6000
+    networks:
+      - elk
+    environment:
+      - ELASTIC_HOST=elastic
+      - ELASTIC_PORT=9200
+      - ELASTIC_USER=elastic
+      - ELASTIC_PWD=changeme
+      - RABBITMQ_HOST=rabbitmq
+
+  twitter_crawler_worker:
+    build:
+      context: docker/twitter_crawler_worker
+    networks:
+      - elk
+    environment:
+      - ELASTIC_HOST=elastic
+      - ELASTIC_PORT=9200
+      - ELASTIC_USER=elastic
+      - ELASTIC_PWD=changeme
+      - RABBITMQ_HOST=rabbitmq
 
 networks:
   elk:
