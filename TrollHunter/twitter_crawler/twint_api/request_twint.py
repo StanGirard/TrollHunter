@@ -20,7 +20,7 @@ args:
     since:          date selector for tweets (Example: 2017-12-27)
     until:          date selector for tweets (Example: 2017-12-27)
     retweet:        set to 1 to retrieve retweet (default: 0)
-    search:         search terms
+    search:         search terms format for hastag : (#hashtag)
     tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
     depth:          search tweet and info from list of follow
     
@@ -130,15 +130,17 @@ def get_tweet_from_user(user, args):
 
 @app.task
 def get_tweet_from_search(args):
-    config = twint.Config()
-    config.Store_object = True
+    config = get_twint_config(args)
     if not "search" in args:
         return " bad request"
     config.Search = args["search"]
+    config.Lang = "en"
     twint.output.tweets_list.clear()
     twint.run.Search(config)
     tweet_result = twint.output.tweets_list
-
+    for tweet in tweet_result:
+        get_info_from_user.delay(tweet.username,args)
+    elastic.store_tweets(tweet_result)
     return format_tweet_to_html(tweet_result, "test")
 
 def crawl_tweet(args):
