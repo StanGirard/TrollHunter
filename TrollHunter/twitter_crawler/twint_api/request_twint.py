@@ -11,21 +11,7 @@ from TrollHunter.twitter_crawler.twint import twint
 HIDE_TWEET_OUPUT = True
 elastic = Elastic()
 
-"""
-args:
-    tweet:          set to 0 to avoid tweet (default: 1)
-    follow:         set to 0 to avoid follow (default: 1)
-    limit:          set the number of tweet to retrieve (Increments of 20, default: 100)
-    follow_limit:   set the number of following and followers to retrieve (default: 100)
-    since:          date selector for tweets (Example: 2017-12-27)
-    until:          date selector for tweets (Example: 2017-12-27)
-    retweet:        set to 1 to retrieve retweet (default: 0)
-    search:         search terms format for hastag : (#hashtag)
-    tweet_interact: set to 1 to parse tweet interaction between users (default: 0)
-    depth:          search tweet and info from list of follow
-    
-TODO: Retrieve tweet twitted to the user ?
-"""
+
 @app.task
 def get_info_from_user(username, args):
     reset_data()
