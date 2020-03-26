@@ -9,6 +9,8 @@ from TrollHunter.twitter_crawler.twint import twint
 from TrollHunter.twitter_crawler.twint_api.elastic import Elastic
 from TrollHunter.twitter_crawler.twint_api import request_twint
 
+stop = False
+
 es = Elastic()
 
 @app.task
@@ -27,24 +29,11 @@ def crawl(list_user,args):
 def crawl_from_search (args):
     signal.signal(signal.SIGINT, exit_)
     signal.signal(signal.SIGTERM, exit_)
-    now = date.today()
 
-    print('Start crawler twitter')
-    while True:
-        start = time.time()
-        try:
-            request_twint.get_tweet_from_search.delay(args)
-            args["since"] = now.isoformat()
-            now = date.today()
-        except Exception as error:
-            print(error)
-        print('Sleeping')
-        sleep = time.time() - start
-        if sleep < 7200:
-            time.sleep(7200 - sleep)
 
 def exit_():
-    sys.exit()
+    global stop
+    stop = True
 
 
 if __name__ == '__main__':
