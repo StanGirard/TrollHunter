@@ -9,8 +9,7 @@ setup(
     name='TrollHunter',
 
 
-
-    version='0.3.1',
+    version='0.3.2',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
     long_description=long_description,
@@ -72,6 +71,7 @@ setup(
         "pycparser==2.19",
         "PySocks==1.7.1",
         "python-dateutil==2.8.1",
+        "python-dotenv==0.12.0",
         "pytz==2019.3",
         "requests==2.23.0",
         "schedule==0.6.0",
@@ -88,8 +88,7 @@ setup(
         "yarl==1.4.2",
         "zipp==3.1.0",
         "nltk==3.4.5",
-        "rake-nltk==1.0.4",
-        "newspaper3k==0.2.8"
+        "rake-nltk==1.0.4"
     ]
 
 )
