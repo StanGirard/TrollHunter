@@ -9,7 +9,8 @@ setup(
     name='TrollHunter',
 
 
-    version='0.3.0',
+
+    version='0.3.1',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
     long_description=long_description,
@@ -87,7 +88,8 @@ setup(
         "yarl==1.4.2",
         "zipp==3.1.0",
         "nltk==3.4.5",
-        "rake-nltk==1.0.4"
+        "rake-nltk==1.0.4",
+        "newspaper3k==0.2.8"
     ]
 
 )
