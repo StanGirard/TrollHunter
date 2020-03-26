@@ -1,5 +1,5 @@
 from elasticsearch import Elasticsearch, helpers
-from datetime import datetime
+import os
 
 TWEET = 'twitter_tweet'
 USER = 'twitter_user'
@@ -8,8 +8,12 @@ CRAWLED = 'twitter_crawled'
 
 
 class Elastic:
-    def __init__(self, host="142.93.170.234", port=9200, user="elastic", password="changeme"):
-        self.es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password))
+    def __init__(self):
+        host = os.environ["ELASTIC_HOST"]
+        port = os.environ["ELASTIC_PORT"]
+        user = os.environ["ELASTIC_USER"]
+        pwd = os.environ["ELASTIC_PWD"]
+        self.es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, pwd))
 
     def is_crawled(self, username):
         res = self.es.count(index=CRAWLED, body={"query": {"bool": {"must": {"match": {"username": str(username)}}}}})["count"]
