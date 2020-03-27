@@ -14,7 +14,7 @@ class Elastic:
         user = os.environ["ELASTIC_USER"]
         pwd = os.environ["ELASTIC_PWD"]
         self.es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, pwd))
-
+    #Check if user is already crawled
     def is_crawled(self, username):
         res = self.es.count(index=CRAWLED, body={"query": {"bool": {"must": {"match": {"username": str(username)}}}}})["count"]
         return res > 0
