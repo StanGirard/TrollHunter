@@ -202,3 +202,7 @@ At least 75 keywords are returned: 25 from extract_v1 and 50 from extract_v2 (we
 
 ### Feelings
 
+Feelings extraction is to extract Polarity, Feelings and Subjectivity as numerical values from a text or set of text.
+To extract them, import from Sentiment.py functions get_sentiment_from_tweets, get_polarity and get_subjectivity.
+We use TextBlob for Polarity and Subjectivity analysis.
+We use SentimentIntensityAnalyzer from nltk.sentiment.vader (nltk package) for feeling analysis.
