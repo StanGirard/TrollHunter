@@ -140,7 +140,7 @@ class Indicator:
         if math.isnan(average_post_time_gap) is True:
             average_post_time_gap = 0
 
-        nb_topics = Indicator.nb_different_topics_v2('./topics/'+str(int(df_csv.iloc[0, 0])), tweet_list['text'])
+        nb_topics = Indicator.nb_different_topics('./example/topics/'+str(int(df_csv.iloc[0, 0])), tweet_list['text'])
         print(user_file, str(tweet_list['text'].size) + " tweets", str(nb_topics) + " topics")
 
         return average_sentiment, average_polarity, average_subjectivity, average_post_time_gap, nb_topics
@@ -178,9 +178,7 @@ class Indicator:
 
 
 if __name__ == '__main__':
-    #indi = Indicator('./users-tweets3')
-    #print(indi.get_all_indicator_users())
-    indi = Indicator('./users-tweets')
+    indi = Indicator('./example/users-tweets')
     print(indi.get_all_indicator_users())
-    indi = Indicator('./users-tweets2')
+    indi = Indicator('./example/users-tweets2')
     print(indi.get_all_indicator_users())
