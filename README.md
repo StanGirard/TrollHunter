@@ -117,7 +117,7 @@ There is currently three index:
 
 The first and second index are stored as in twitter. The third is build to store interaction from followers/following, conversation and retweet.
 
-![Twitter interaction](docs/images/twitter_interaction.pngit )
+![Twitter interaction](docs/images/twitter_interaction.png )
 
 ## News Indexer
 
