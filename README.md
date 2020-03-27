@@ -206,3 +206,10 @@ Feelings extraction is to extract Polarity, Feelings and Subjectivity as numeric
 To extract them, import from Sentiment.py functions get_sentiment_from_tweets, get_polarity and get_subjectivity.
 We use TextBlob for Polarity and Subjectivity analysis.
 We use SentimentIntensityAnalyzer from nltk.sentiment.vader (nltk package) for feeling analysis.
+
+### Average Indicator
+
+This one is to compute and extract average useful data from a set of tweets for a user (or a set of users).
+It consists in one class called "Indicator". You give it one folder with a set of user csv file, and you call
+"get_all_indicator_users" function to apply all our algorithms to have an average and detect some patterns.
+We can for instance compare a set of troll users and a set of non-troll users.
