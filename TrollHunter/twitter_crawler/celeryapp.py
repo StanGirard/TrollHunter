@@ -8,6 +8,8 @@ app = Celery('crawler-api',
              broker='pyamqp://guest@' + os.environ["RABBITMQ_HOST"],
              include=['TrollHunter.twitter_crawler.twint_api.request_twint','TrollHunter.twitter_crawler.crawler'])
 
+#Start worker rabbitmq
+
 def run_crawler():
     worker_celery = worker.worker(app=app)
     option = {'loglevel': 'INFO'}

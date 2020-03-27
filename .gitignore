@@ -13,3 +13,4 @@ postgres-data/
 build/
 TrollHunter.egg-info/
 dist/
+.ipynb_checkpoints/

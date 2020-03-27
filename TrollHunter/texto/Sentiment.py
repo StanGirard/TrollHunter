@@ -4,6 +4,9 @@ import pandas as pd
 
 
 def get_sentiment_from_tweets(tweet):
+    if not isinstance(tweet, list):
+        tweet = [tweet]
+
     analyser = SentimentIntensityAnalyzer()
     sentiment_scores = []
 
@@ -17,7 +20,18 @@ def get_sentiment_from_tweets(tweet):
     return sentiment_df
 
 
+def get_sentiment_value(tweet):
+    analyser = SentimentIntensityAnalyzer()
+
+    score = analyser.polarity_scores(tweet)
+
+    return score['compound']
+
+
 def get_polarity(tweet):
+    if not isinstance(tweet, list):
+        tweet = [tweet]
+
     tab_result = {'tweet': [],
                   'polarity': []}
 
@@ -33,7 +47,17 @@ def get_polarity(tweet):
     return df_result
 
 
+def get_polarity_value(tweet):
+    obj = TextBlob(tweet)
+    polarity = obj.sentiment.polarity
+
+    return polarity
+
+
 def get_subjectivity(tweet):
+    if not isinstance(tweet, list):
+        tweet = [tweet]
+
     tab_result = {'tweet': [],
                   'subjectivity': []}
 
@@ -47,6 +71,13 @@ def get_subjectivity(tweet):
     df_result = pd.DataFrame(tab_result, columns=['tweet', 'subjectivity'])
 
     return df_result
+
+
+def get_subjectivity_value(tweet):
+    obj = TextBlob(tweet)
+    subjectivity = obj.sentiment.subjectivity
+
+    return subjectivity
 
 
 if __name__ == '__main__':
