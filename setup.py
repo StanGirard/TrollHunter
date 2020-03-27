@@ -9,7 +9,7 @@ setup(
     name='TrollHunter',
 
 
-    version='0.2.10',
+    version='0.3.4',
     description='TrollHunter',
     url="https://github.com/StanGirard/TrollHunter",
     long_description=long_description,
@@ -71,6 +71,7 @@ setup(
         "pycparser==2.19",
         "PySocks==1.7.1",
         "python-dateutil==2.8.1",
+        "python-dotenv==0.12.0",
         "pytz==2019.3",
         "requests==2.23.0",
         "schedule==0.6.0",

@@ -1,6 +1,8 @@
 from elasticsearch import Elasticsearch
 from newspaper import Article
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from TrollHunter.loggers import InfluxDBLog
 
 
@@ -55,7 +57,7 @@ def update_keyword_es(es, hit):
               body={"doc": {"news:keywords": hit['_source']['news:keywords']}})
 
 
-def define_keywords_article(size=100, host="142.93.170.234", port=9200, user="elastic", password="changeme", influx_db=False):
+def define_keywords_article(size=100, host=os.getenv("ELASTIC_SERVER"), port=os.getenv("ELASTIC_PORT"), user=os.getenv("ELASTIC_USER"), password=os.getenv("ELASTIC_PASSWORD"), influx_db=False):
     """
     Get news entries from ElasticSearch without keywords.
     For each entry extracts keywords and updates the value in ElasticSearch.
@@ -70,7 +72,11 @@ def define_keywords_article(size=100, host="142.93.170.234", port=9200, user="el
     """
     es = Elasticsearch(hosts=[{'host': host, 'port': port}], http_auth=(user, password))
     for hit in get_null_keywords_es(es, size):
-        hit = set_keywords(hit)
+        try:
+            hit = set_keywords(hit)
+        except Exception as error:
+            print(error)
+            continue
         if_influx_url(influx_db, hit['_id'])
         update_keyword_es(es, hit)
 

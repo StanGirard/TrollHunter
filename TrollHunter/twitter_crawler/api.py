@@ -1,7 +1,8 @@
 import time
 from datetime import date
-
-from flask import Flask, request
+from multiprocessing.dummy import Value, Process
+from threading import Thread
+from flask import Flask, request, Response
 
 from TrollHunter.twitter_crawler import crawler
 from TrollHunter.twitter_crawler.twint_api import request_twint
@@ -26,6 +27,8 @@ args:
 
 TODO: Retrieve tweet twitted to the user ?
 """
+p = None
+_stop = Value('b',False)
 
 """get tweets/follow interaction from user"""
 @app.route('/tweets/<string:user>', methods=['GET'])
@@ -36,12 +39,39 @@ def user_tweet(user):
 """get many tweets from hashtag or search terms"""
 @app.route('/tweets/', methods=['GET'])
 def search_tweet():
-    yield "200"
+
+    global p
+    global _stop
+
+    if not _stop.value:
+        return  " please stop previous search wiht endpoint /stop"
+    else:
+        _stop.value = False
+
+
+    p = Process(target=crawl,args=(request.args,_stop))
+    p.start()
+
+    return "200"
+
+
+
+"""stop search"""
+@app.route('/stop/', methods=['GET'])
+def stop():
+    global _stop
+    _stop.value = True
+    return "200"
+
+"""get origin of a tweet"""
+@app.route('/tweets/origin/', methods=['GET'])
+def origin_tweet():
+    return request_twint.get_origin_tweet.delay(request.args)
+
+def crawl(args,stop):
     now = date.today()
-    args = request.args
     print('Start crawler twitter')
-    # sleep 2 hours and crawl tweet since 2hour
-    while not stop:
+    while not stop.value:
         start = time.time()
         try:
             request_twint.get_tweet_from_search.delay(args)
@@ -53,22 +83,10 @@ def search_tweet():
         sleep = time.time() - start
         if sleep < 7200:
             time.sleep(7200 - sleep)
+    print("Stop crawl")
 
-"""stop search"""
-@app.route('/stop/', methods=['GET'])
-def stop():
-    global stop
-    stop = True
-    return "200"
-
-"""get origin of a tweet"""
-@app.route('/tweets/origin/', methods=['GET'])
-def origin_tweet():
-        return request_twint.get_origin_tweet.delay(request.args)
-
-
-def run():
-    app.run()
+def run(port=6000):
+    app.run(port=port)
 
 if __name__ == '__main__':
     run()
