@@ -125,14 +125,14 @@ The first and second index are stored as in twitter. The third is build to store
 The second main part of the project is the crawler and indexer of news.
 
 For this, we use the sitemap xml file of news websites to crawl all the articles. In a sitemap file, we extract the tag
-*sitemap* and *url*.
+**sitemap** and **url**.
 
-The *sitemap* tag is a link to a child sitemap xml file for a specific category of articles in the website.
+The **sitemap** tag is a link to a child sitemap xml file for a specific category of articles in the website.
 
 The *url* tag represents an article/news of the website.  
 
 The root url of a sitemap is stored in a postgres database with a trust level of the website (Oriented, Verified,
-Fake News, ...) and headers. The headers are the tag we want to extract from the *url* tag which contains details about
+Fake News, ...) and headers. The headers are the tag we want to extract from the **url** tag which contains details about
 the article (title, keywords, publication date, ...).
 
 The headers are the list of fields use in the index pattern of ElasticSearch.
@@ -148,8 +148,16 @@ In the same time, some sitemaps don't provide the keywords for their articles. H
 entries without keywords. Then, we download the content of the article and extract the keywords thanks to NLP. Finally,
 we update the entries in ElasticSearch.
 
-### Run
+### How it works
+- Insert a sitemap that you want to crawl with `insert_sitemap(loc, lastmod, url_headers, id_trust)`
+- Then run `scheduler_news()`which will retrieve all the sitemap that you have inserted in the database
+- You can also run `scheduler_keywords()` to extract the keywords that are missing from the url that have been fetched.
+- Every urls found are inserted in elastic.
 
+![](docs/images/elastic-news-crawler.png)
+ 
+
+### Run
 For the crawler/indexer:
 
 ```python
@@ -174,3 +182,11 @@ We use grafana for visualizing and monitoring different events with the crawler/
 the insertion of an url in ElasticSearch and the extraction of keywords in an article.
 
 ![alt text](docs/images/grafana.png)
+
+Create new events.
+
+- Use `TrollHunter.loggers.InfluxDBLog()`
+- Create a new dashboard in grafana, save as json and add it to `docker/grafana-provisioning/dashboards`
+
+
+
