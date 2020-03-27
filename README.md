@@ -61,6 +61,7 @@ When we used twint, we encountered some problems:
 
 - Bad compatibility with windows and datetime
 - We can't set a limit on the recovery of tweets
+- Bug with some user-agent
 
 So we decided to [fork](https://github.com/quentin-derosin/twint) the project.
 
@@ -109,6 +110,7 @@ Some query parameters are available:
 
 Information retrieve with twint is stored in elastic search, we do not use the default twint storage format as we want a stronger relationship parsing.
 There is currently three index:
+
 - twitter_user
 - twitter_tweet
 - twitter_interaction
@@ -116,7 +118,6 @@ There is currently three index:
 The first and second index are stored as in twitter. The third is build to store interaction from followers/following, conversation and retweet.
 
 ![Twitter interaction](docs/images/twitter_interaction.pngit )
-
 
 ## News Indexer
 
@@ -166,11 +167,9 @@ scheduler_keywords(time_interval, max_entry)
 
 Or see with the [main](https://github.com/StanGirard/TrollHunter/tree/master/docker/news_crawler) use with docker.  
 
-
 ## Grafana
 
 We use grafana for visualizing and monitoring different events with the crawler/indexer as
 the insertion of an url in ElasticSearch and the extraction of keywords in an article.
 
 ![alt text](docs/images/grafana.png)
-
