@@ -43,7 +43,9 @@ or clone the project and run
 pip3 install -r requirements.txt
 ```
 
-## Twint
+## Twitter crawler
+
+### Twint
 
 For crawl tweets and extract user's information we use Twint wich allow us to get many information without
 using Twitter api.
@@ -69,7 +71,7 @@ With allow us to:
 - get follow and follower
 - search tweet from hashtag or word
 
-## API
+### API
 
 For this we use the open-source framework flask.
 
@@ -102,6 +104,19 @@ Some query parameters are available:
   - for multiple : (#Hashtag1 AND|OR #Hashtag2)
 - ```tweet_interact```: set to 1 to parse tweet interaction between users (default: 0)
 - ```depth```:          search tweet and info from list of follow
+
+### Twitter Storage
+
+Information retrieve with twint is stored in elastic search, we do not use the default twint storage format as we want a stronger relationship parsing.
+There is currently three index:
+- twitter_user
+- twitter_tweet
+- twitter_interaction
+
+The first and second index are stored as in twitter. The third is build to store interaction from followers/following, conversation and retweet.
+
+![Twitter interaction](docs/images/twitter_interaction.pngit )
+
 
 ## News Indexer
 
