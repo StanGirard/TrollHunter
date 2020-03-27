@@ -182,3 +182,11 @@ We use grafana for visualizing and monitoring different events with the crawler/
 the insertion of an url in ElasticSearch and the extraction of keywords in an article.
 
 ![alt text](docs/images/grafana.png)
+
+Create new events.
+
+- Use `TrollHunter.loggers.InfluxDBLog()`
+- Create a new dashboard in grafana, save as json and add it to `docker/grafana-provisioning/dashboards`
+
+
+
