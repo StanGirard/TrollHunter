@@ -11,6 +11,18 @@ It composed of three parts:
 
 ## Installation
 
+You can either run
+
+```Bash
+pip3 install TrollHunter
+```
+
+or clone the project and run
+
+```Bash
+pip3 install -r requirements.txt
+```
+
 ### Docker
 
 TrollHunter requires many services to run
@@ -24,23 +36,12 @@ You can either launch them individually if you already have them setup or use ou
 - Install Docker
 - Run `docker-compose up -d`
 
+### Setup
 Change the `.env` with the required values
 Export the `.env` variables
 
 ```Bash
 export $(cat .env | sed 's/#.*//g' | xargs)
-```
-
-You can either run
-
-```Bash
-pip3 install TrollHunter
-```
-
-or clone the project and run
-
-```Bash
-pip3 install -r requirements.txt
 ```
 
 ## Twitter crawler
