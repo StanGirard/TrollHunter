@@ -87,4 +87,10 @@ scheduler_keywords(time_interval, max_entry)
 Or see with the [main](https://github.com/StanGirard/TrollHunter/tree/master/docker/news_crawler) use with docker.  
 
 
+## Grafana
+
+We use grafana for visualizing and monitoring different events with the crawler/indexer as
+the insertion of an url in ElasticSearch and the extraction of keywords in an article.
+
+![alt text](docs/images/grafana.png)
 
