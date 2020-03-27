@@ -28,7 +28,7 @@ args:
 TODO: Retrieve tweet twitted to the user ?
 """
 p = None
-_stop = Value('b',False)
+_stop = Value('b',True)
 
 """get tweets/follow interaction from user"""
 @app.route('/tweets/<string:user>', methods=['GET'])

@@ -113,6 +113,16 @@ def get_tweet_from_user(user, args):
     user.set_tweets(twint.output.tweets_list)
     return user.tweets
 
+@app.task
+def get_interaction_from_crawl(tweet,args):
+
+    user = User(tweet["username"])
+    user.set_tweets([tweet])
+    get_info_user(user, args)
+    retrieve_tweet_actors(user, args)
+    elastic.store_user(user.user_info)
+    elastic.store_interactions(user.interactions)
+
 
 @app.task
 def get_tweet_from_search(args):
@@ -125,9 +135,9 @@ def get_tweet_from_search(args):
     twint.run.Search(config)
     tweet_result = twint.output.tweets_list
     for tweet in tweet_result:
-        get_info_from_user.delay(tweet.username,args)
+        get_interaction_from_crawl.delay(vars(tweet),args)
+        # get_info_from_crawl.delay(tweet.username,args)
     elastic.store_tweets(tweet_result)
-    return format_tweet_to_html(tweet_result, "test")
 
 def crawl_tweet(args):
     reset_data()
