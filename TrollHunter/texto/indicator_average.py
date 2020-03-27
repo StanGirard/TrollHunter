@@ -9,7 +9,6 @@ import warnings
 from nltk import word_tokenize
 from gensim import corpora, models, similarities
 
-
 warnings.simplefilter(action='ignore')
 
 def cleantext(text):
@@ -87,13 +86,13 @@ class Indicator:
 
             i += 1
 
-        file = open(name, 'w')
-        for topic in topics:
-            for text in topic:
-                file.write(text+"\n")
-            file.write('--------------------\n')
+        #file = open(name, 'w')
+        #for topic in topics:
+        #    for text in topic:
+        #        file.write(text+"\n")
+        #    file.write('--------------------\n')
 
-        file.close()
+        #file.close()
         return len(list_sets)
 
     @staticmethod
@@ -140,7 +139,7 @@ class Indicator:
         if math.isnan(average_post_time_gap) is True:
             average_post_time_gap = 0
 
-        nb_topics = Indicator.nb_different_topics('./example/topics/'+str(int(df_csv.iloc[0, 0])), tweet_list['text'])
+        nb_topics = Indicator.nb_different_topics(df_csv.iloc[0, 0], tweet_list['text'])
         print(user_file, str(tweet_list['text'].size) + " tweets", str(nb_topics) + " topics")
 
         return average_sentiment, average_polarity, average_subjectivity, average_post_time_gap, nb_topics
