@@ -20,15 +20,19 @@ class User:
     def extract_tweet_interaction(self):
         usrname = set()
         for tweet in self.tweets:
-            if tweet.user_rt:
-                usrname.add(tweet.username)
-                self.add_interaction(str(tweet.conversation_id) + str(tweet.user_id) + str(tweet.user_rt_id),
-                                     tweet.user_rt_id, 'retweet', tweet.user_id, source=tweet.id)
-            for usr in tweet.reply_to:
-                if int(tweet.user_id) != int(usr['user_id']):
+            if not isinstance(tweet,dict):
+                tweet_dict = vars(tweet)
+            else:
+                tweet_dict = tweet
+            if tweet_dict["user_rt"]:
+                usrname.add(tweet_dict["username"])
+                self.add_interaction(str(tweet_dict["conversation_id"]) + str(tweet_dict["user_id"]) + str(tweet_dict["user_rt_id"]),
+                                     tweet_dict["user_rt_id"], 'retweet', tweet_dict["user_id"], source=tweet_dict["id"])
+            for usr in tweet_dict["reply_to"]:
+                if int(tweet_dict["user_id"]) != int(usr['user_id']):
                     usrname.add(usr['username'])
-                    self.add_interaction(str(tweet.conversation_id) + str(tweet.user_id) + str(usr['user_id']),
-                                         tweet.user_id, 'converse', usr['user_id'], source=tweet.id)
+                    self.add_interaction(str(tweet_dict["conversation_id"]) + str(tweet_dict["user_id"]) + str(usr['user_id']),
+                                         tweet_dict["user_id"], 'converse', usr['user_id'], source=tweet_dict["id"])
         return usrname
 
     def add_actor_info(self, actor):
