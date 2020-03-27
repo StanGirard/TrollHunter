@@ -260,17 +260,8 @@ def extract_v2(txt: str, lim: int = 50, withNumbers=True) -> set:
         phrase_scores.append(phrase_score)
         keywords.append(keyword.strip())
 
-    i = 0
-    for keyword in keywords:
-        # print("Keyword: '" + str(keyword) + "', Score: " + str(phrase_scores[i]))
-        i += 1
-
     sorted_index = np.flip(np.argsort(phrase_scores), 0)
-
     keywords_num = lim if len(keywords) >= lim else len(keywords)
-
-    # print("Keywords:\n")
-
     res = []
     for i in range(0, keywords_num):
         res.append(str(keywords[sorted_index[i]]))
@@ -279,9 +270,7 @@ def extract_v2(txt: str, lim: int = 50, withNumbers=True) -> set:
 
 
 if __name__ == '__main__':
-    file = open("./text_example.txt", "r")
-    text = file.read()
+    text = "VIDEO : President-Elect Trump is SALUTED by Firefighters as Trump Force One Leaves New York"
     print(extract(text))
     print(extract_v1(text))
     print(extract_v2(text))
-    file.close()
