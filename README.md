@@ -189,4 +189,42 @@ Create new events.
 - Create a new dashboard in grafana, save as json and add it to `docker/grafana-provisioning/dashboards`
 
 
+## Text analysis
 
+The text Analysis part is under TrollHunter/texto. It aims to process a text or a set of texts to retrieve useful
+information that can be used to help determine the "troll" status of a user or link a text to a news.
+
+There a several classes that make the job:
+
+- Sentiment.py to extract polarity, feeling and subjectivity (integer indicators)
+- Keyword.py to extract keywords/topics from a text input (a tweet or maybe a news)
+- Inicator_average.py to compute tweets from a list of user (in a specific format) and produce an mean for all users.
+This was used for used to detect patterns that could help to qualify a user as a troll or not, by giving a certain trust
+percentage.
+
+### Keyword
+
+Keywords extraction are useful because it can help can detect topics of an input text.
+To extract keywords from a text, just import "extract" function from Keyword and call it with a text as input.
+"extract" function is just a wrapper of 2 extraction functions:
+- extract_v1: implements RAKE (Rapid Automatic Keyword Extraction) algorithm. As it name says, it's a faster way to
+extract keywords. Keywords are lemmatized.
+- extract_v2: implements TextRank keyword Extraction. It produces better results than RAKE but it is slower.
+
+We use both results on the same text and merge them to have keywords from both algorithm. Because of different
+algorithms, results are sometimes different so we merge the result into a set of unique keywords to have both visions.
+At least 75 keywords are returned: 25 from extract_v1 and 50 from extract_v2 (we can adjust this number by parameter).
+
+### Feelings
+
+Feelings extraction is to extract Polarity, Feelings and Subjectivity as numerical values from a text or set of text.
+To extract them, import from Sentiment.py functions get_sentiment_from_tweets, get_polarity and get_subjectivity.
+We use TextBlob for Polarity and Subjectivity analysis.
+We use SentimentIntensityAnalyzer from nltk.sentiment.vader (nltk package) for feeling analysis.
+
+### Average Indicator
+
+This one is to compute and extract average useful data from a set of tweets for a user (or a set of users).
+It consists in one class called "Indicator". You give it one folder with a set of user csv file, and you call
+"get_all_indicator_users" function to apply all our algorithms to have an average and detect some patterns.
+We can for instance compare a set of troll users and a set of non-troll users.

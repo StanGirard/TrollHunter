@@ -76,7 +76,7 @@ def lemetize(POS_tag):
 
 
 def extract_v1(txt: str, lim: int = 25) -> set:
-    # Uses stopwords for english from NLTK, and all puntuation characters by
+    # Uses stopwords for english from NLTK, and all punctuation characters by
     # default
     r = Rake()
     # Extraction given the text
