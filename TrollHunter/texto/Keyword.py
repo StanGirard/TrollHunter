@@ -1,10 +1,12 @@
 from rake_nltk import Rake
 import numpy as np
 import math
-import nltk
 from nltk import word_tokenize
 import string
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet as wn
+import nltk
+from nltk.corpus import stopwords as sw
 
 # download/update POS tag list and tag each token
 nltk.download('averaged_perceptron_tagger')
@@ -24,6 +26,30 @@ def clean(text):
     text = "".join(list(text))
     return text
 
+
+def get_lemma(word):
+    lemma = wn.morphy(word)
+    if lemma is None:
+        return word
+    else:
+        return lemma
+
+
+def filter_text_by_pos(text, wanted_POS = ['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']):
+    # tag each token
+    POS_tag = nltk.pos_tag(text)
+
+    # print("Lemmatized text with POS tags: \n")
+    # print(POS_tag)
+
+    res = []
+    print(POS_tag)
+
+    for word in POS_tag:
+        if word[1] in wanted_POS:
+            res.append(word[0])
+
+    return res
 
 def lemetize_text(text: str) -> str:
     text = word_tokenize(text)
@@ -74,7 +100,7 @@ def extract_v1(txt: str, lim: int = 25) -> set:
     return set(res[:(lim if len(res) >= lim else len(res))])
 
 
-def extract_v2(txt: str, lim: int = 50) -> set:
+def extract_v2(txt: str, lim: int = 50, withNumbers=True) -> set:
     # algorithm from https://github.com/JRC1995/TextRank-Keyword-Extraction/blob/master/TextRank.ipynb
 
     # nltk.download('punkt')
@@ -102,7 +128,9 @@ def extract_v2(txt: str, lim: int = 50) -> set:
 
     stopwords = []
 
-    wanted_POS = ['CD', 'NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']
+    wanted_POS = ['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBG', 'FW']
+    if withNumbers is True:
+        wanted_POS.append('CD')
 
     for word in POS_tag:
         if word[1] not in wanted_POS:
@@ -110,16 +138,7 @@ def extract_v2(txt: str, lim: int = 50) -> set:
 
     punctuations = list(str(string.punctuation))
 
-    stopwords = stopwords + punctuations
-    stopword_file = open("stopwords.txt", "r")
-    # Source = https://www.ranks.nl/stopwords
-
-    lots_of_stopwords = []
-
-    for line in stopword_file.readlines():
-        lots_of_stopwords.append(str(line.strip()))
-
-    stopwords_plus = stopwords + lots_of_stopwords
+    stopwords_plus = stopwords + punctuations + list(sw.words('english'))
     stopwords_plus = set(stopwords_plus)
     processed_text = []
     for word in lemmatized_text:
@@ -260,7 +279,7 @@ def extract_v2(txt: str, lim: int = 50) -> set:
 
 
 if __name__ == '__main__':
-    file = open("text_example.txt", "r")
+    file = open("./text_example.txt", "r")
     text = file.read()
     print(extract(text))
     print(extract_v1(text))
