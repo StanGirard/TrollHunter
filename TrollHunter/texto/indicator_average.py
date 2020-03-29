@@ -4,15 +4,12 @@ import math
 import os
 from Sentiment import get_sentiment_value, get_polarity_value, get_subjectivity_value
 from Keyword import extract_v2, filter_text_by_pos, lemetize_text
-import re
+from Utils import cleantext
 import warnings
 from nltk import word_tokenize
 from gensim import corpora, models, similarities
 
 warnings.simplefilter(action='ignore')
-
-def cleantext(text):
-    return ' '.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^RT|http.+?", "", text).split())
 
 class Indicator:
     def __init__(self, data_folder):
