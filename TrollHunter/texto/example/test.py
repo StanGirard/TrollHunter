@@ -18,10 +18,7 @@ data = "new_tweets"
 read_data = pd.read_csv(data)
 read_tweets = read_data['0'].values
 
-#remove bad chars
-def cleantext(text):
-    #return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", text).split())
-    return ' '.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^RT|http.+?", "", text).split())
+
 
 #clean text and reduce to lower case
 data_size = 15000
