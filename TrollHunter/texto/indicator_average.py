@@ -35,7 +35,7 @@ class Indicator:
         return cumul / len_t
 
     @staticmethod
-    def nb_different_topics(name, texts):
+    def nb_different_topics(texts):
         textValues = texts.values
         texts = texts.apply(cleantext)
         keywords_column = texts.apply(lambda x: extract_v2(x, withNumbers=False))
@@ -136,10 +136,10 @@ class Indicator:
         if math.isnan(average_post_time_gap) is True:
             average_post_time_gap = 0
 
-        nb_topics = Indicator.nb_different_topics(df_csv.iloc[0, 0], tweet_list['text'])
-        print(user_file, str(tweet_list['text'].size) + " tweets", str(nb_topics) + " topics")
+        nb_topics = Indicator.nb_different_topics(tweet_list['text'])
+        print(user_file)
 
-        return average_sentiment, average_polarity, average_subjectivity, average_post_time_gap, nb_topics
+        return average_sentiment, average_polarity, average_subjectivity, average_post_time_gap, nb_topics, tweet_list['text'].size
 
     def get_all_indicator_users(self):
         average_sentiment = []
@@ -148,10 +148,16 @@ class Indicator:
         average_time_gap = []
         average_nb_topics = []
 
+        out = pd.DataFrame(columns=['sentiment', 'polarity', 'subjectivity', 'timegap', 'nb_topics', 'nb_tweets'])
+
         cpt = 1
         for element in os.listdir(self.data_folder):
             if not os.path.isdir(element):
-                sentiment, polarity, subjectivity, time_gap, nb_topics = self.get_indicators_user(os.path.join(self.data_folder, element))
+                sentiment, polarity, subjectivity, time_gap, nb_topics, nb_tweets = self.get_indicators_user(os.path.join(self.data_folder, element))
+                row = pd.DataFrame(np.array([[sentiment, polarity, subjectivity, time_gap, nb_topics, nb_tweets]]),
+                                   columns=['sentiment', 'polarity', 'subjectivity', 'timegap', 'nb_topics', 'nb_tweets'])
+                out = pd.concat([out, row], ignore_index=True)
+
                 average_sentiment.append(sentiment)
                 average_polarity.append(polarity)
                 average_subjectivity.append(subjectivity)
@@ -159,6 +165,8 @@ class Indicator:
                 average_nb_topics.append(nb_topics)
 
                 cpt += 1
+
+        out.to_csv(self.data_folder+".csv", index=False)
 
         average_sentiment = self.average(average_sentiment)
         average_polarity = self.average(average_polarity)

@@ -1,6 +1,4 @@
 import pandas as pd
-from polyglot.detect import Detector
-
 
 def get_user_data(user_file):
     df_csv = pd.read_csv(user_file)
@@ -39,16 +37,6 @@ if __name__ == '__main__':
             t = find_tweets_from_user(p, intId)
             t = t.sort_values(by="created_at", ascending=True)
             textValues = t['text'].values
-
-            # check language
-            cptWrongLang = 0
-            for text in textValues:
-                main_language = Detector(text).language
-                if main_language.code != "en":
-                    cptWrongLang += 1
-
-            if cptWrongLang / len(textValues) > 0.2:
-                continue
 
             tweetList.append(pd.DataFrame(textValues))
             t.to_csv(file, index=False)
