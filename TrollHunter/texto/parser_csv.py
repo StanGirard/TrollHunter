@@ -26,7 +26,7 @@ def find_tweets_from_user(df_tweets, id_user) -> pd.DataFrame:
 if __name__ == '__main__':
     p = get_tweet_data("example/tweets.csv")
     users = pd.read_csv("example/users.csv")
-    begPath = "./users-tweets/"
+    begPath = "./troll-user-tweets/"
 
     tweetList = []
 

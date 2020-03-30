@@ -182,7 +182,7 @@ class Indicator:
 
 
 if __name__ == '__main__':
-    indi = Indicator('./example/users-tweets')
+    indi = Indicator('./example/troll-user-tweets')
     print(indi.get_all_indicator_users())
-    indi = Indicator('./example/users-tweets2')
+    indi = Indicator('./example/nontroll-user-tweets')
     print(indi.get_all_indicator_users())
