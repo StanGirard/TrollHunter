@@ -1,0 +1,18 @@
+#!/bin/bash
+export INFLUXDB_SERVER="localhost"
+export INFLUXDB_PORT="8086"
+export INFLUXDB_USERNAME="instapy"
+export INFLUXDB_PASSWORD="password"
+export INFLUXDB_DB="instapy"
+export GRAFANA_USERNAME="admin"
+export GRAFANA_PASSWORD="admin"
+export ELK_VERSION="7.6.0"
+export ELASTIC_SERVER="localhost"
+export ELASTIC_PORT="9200"
+export ELASTIC_USER="elastic"
+export ELASTIC_PASSWORD="changeme"
+export 
+export SQL_SERVER="localhost"
+export SQL_DATABASE="sitemap"
+export SQL_USER="trollhunter"
+export SQL_PASSWORD="trollhunter"

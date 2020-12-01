@@ -23,7 +23,7 @@ services:
     expose:
       - "8086"
     environment:
-      - INFLUXDB_DB=${INFLUX_DB}
+      - INFLUXDB_DB=${INFLUXDB_DB}
       - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
       - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD}
     networks:
@@ -57,7 +57,7 @@ services:
       - "3000"
     
     environment:
-      - VIRTUAL_HOST=grafana.trollhunter.guru
+      - VIRTUAL_HOST=locahost
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
     networks:
@@ -81,30 +81,30 @@ services:
       - 8080:8080
     networks:
       - elk
-  elasticsearch:
-    build:
-      context: docker/elk/elasticsearch/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    volumes:
-      - type: bind
-        source: ./docker/elk/elasticsearch/config/elasticsearch.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
-      - type: volume
-        source: elasticsearch
-        target: /usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      ES_JAVA_OPTS: "-Xmx1G -Xms1G"
-      ELASTIC_PASSWORD: changeme
-      # Use single node discovery in order to disable production mode and avoid bootstrap checks
-      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
-      discovery.type: single-node
-    networks:
-      - elk
+  # elasticsearch:
+  #   build:
+  #     context: docker/elk/elasticsearch/
+  #     args:
+  #       ELK_VERSION: $ELK_VERSION
+  #   volumes:
+  #     - type: bind
+  #       source: ./docker/elk/elasticsearch/config/elasticsearch.yml
+  #       target: /usr/share/elasticsearch/config/elasticsearch.yml
+  #       read_only: true
+  #     - type: volume
+  #       source: elasticsearch
+  #       target: /usr/share/elasticsearch/data
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   environment:
+  #     ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+  #     ELASTIC_PASSWORD: changeme
+  #     # Use single node discovery in order to disable production mode and avoid bootstrap checks
+  #     # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+  #     discovery.type: single-node
+  #   networks:
+  #     - elk
 
   logstash:
     build:
@@ -125,11 +125,11 @@ services:
       - "5000:5000/udp"
       - "9600:9600"
     environment:
-      LS_JAVA_OPTS: "-Xmx1G -Xms1G"
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
     networks:
       - elk
-    depends_on:
-      - elasticsearch
+    # depends_on:
+    #   - elasticsearch
 
   kibana:
     build:
@@ -144,11 +144,11 @@ services:
     ports:
       - "5601:5601"
     environment:
-      - VIRTUAL_HOST=kibana.trollhunter.guru
+      - VIRTUAL_HOST=localhost
     networks:
       - elk
-    depends_on:
-      - elasticsearch
+    # depends_on:
+    #   - elasticsearch
 
   rabbitmq:
     image: 'rabbitmq:3.8.2-management'
@@ -199,7 +199,7 @@ networks:
     driver: bridge
   
 volumes:
-  elasticsearch:
+  # elasticsearch:
   influxdb-storage:
   chronograf-storage:
   grafana-storage:
