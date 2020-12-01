@@ -8,3 +8,5 @@ elasticsearch.hosts: [ "http://localhost:9200" ]
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 vega.enableExternalUrls: true
 xpack.security.enabled: false
+elasticsearch.username: elastic
+elasticsearch.password: changeme
