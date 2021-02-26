@@ -3,7 +3,7 @@ nltk==3.4.5
 textblob==0.15.3
 aiodns==2.0.0
 aiofiles==0.4.0
-aiohttp==3.6.2
+aiohttp==3.7.4
 aiohttp-socks==0.3.4
 amqp==2.5.2
 aniso8601==8.0.0
