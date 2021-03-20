@@ -59,7 +59,7 @@ setup(
         "influxdb==5.2.3",
         "importlib-metadata==1.5.0",
         "itsdangerous==1.1.0",
-        "Jinja2==2.11.1",
+        "Jinja2==2.11.3",
         "kombu==4.6.8",
         "MarkupSafe==1.1.1",
         "multidict==4.7.5",
