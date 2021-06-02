@@ -81,7 +81,7 @@ setup(
         "toml==0.10.0",
         "typing-extensions==3.7.4.1",
         "Unidecode==1.1.1",
-        "urllib3==1.25.8",
+        "urllib3==1.26.5",
         "vine==1.3.0",
         "Werkzeug==1.0.0",
         "wsproto==0.15.0",
