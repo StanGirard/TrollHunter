@@ -37,7 +37,7 @@ setup(
         "billiard==3.6.3.0",
         "blinker==1.4",
         "cchardet==2.1.5",
-        "celery==4.4.1",
+        "celery==5.2.2",
         "certifi==2019.11.28",
         "cffi==1.14.0",
         "chardet==3.0.4",
