@@ -63,7 +63,7 @@ setup(
         "kombu==4.6.8",
         "MarkupSafe==1.1.1",
         "multidict==4.7.5",
-        "numpy==1.18.1",
+        "numpy==1.22.0",
         "pandas==1.0.1",
         "priority==1.3.0",
         "psycopg2-binary==2.8.4",
