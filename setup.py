@@ -67,7 +67,7 @@ setup(
         "pandas==1.0.1",
         "priority==1.3.0",
         "psycopg2-binary==2.8.4",
-        "pycares==3.1.1",
+        "pycares==4.2.0",
         "pycparser==2.19",
         "PySocks==1.7.1",
         "python-dateutil==2.8.1",
