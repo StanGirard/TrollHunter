@@ -38,7 +38,7 @@ setup(
         "blinker==1.4",
         "cchardet==2.1.5",
         "celery==4.4.1",
-        "certifi==2019.11.28",
+        "certifi==2022.12.7",
         "cffi==1.14.0",
         "chardet==3.0.4",
         "Click==7.0",
